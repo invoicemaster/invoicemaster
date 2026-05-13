@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>InvoiceMaster — Free Online Invoice Generator</title>
+  <meta name="description" content="Generate clean, professional invoices in your browser. All data stays on your device." />
+  <link rel="stylesheet" href="css/styles.css" />
+  <link rel="stylesheet" href="css/print.css" media="print" />
+</head>
+<body>
+  <header class="topbar no-print">
+    <div class="wrap">
+      <h1 class="brand">InvoiceMaster</h1>
+      <nav class="tabs" id="tabs">
+        <button data-tab="invoice" class="tab active">Invoice</button>
+        <button data-tab="business" class="tab">Business</button>
+        <button data-tab="clients" class="tab">Clients</button>
+        <button data-tab="history" class="tab">History</button>
+      </nav>
+    </div>
+  </header>
+
+  <main class="wrap">
+    <!-- INVOICE TAB -->
+    <section id="tab-invoice" class="tab-panel active">
+      <div class="invoice-sheet" id="invoice-sheet">
+        <div class="invoice-head">
+          <div class="biz-block">
+            <div class="biz-logo" id="biz-logo"></div>
+            <div class="biz-meta">
+              <div class="biz-name" id="biz-name">Your Business</div>
+              <div class="biz-line" id="biz-address"></div>
+              <div class="biz-line" id="biz-contact"></div>
+            </div>
+          </div>
+          <div class="invoice-meta">
+            <div class="invoice-title">INVOICE</div>
+            <label class="meta-row">
+              <span>Number</span>
+              <input type="text" id="inv-number" placeholder="INV-0001" />
+            </label>
+            <label class="meta-row">
+              <span>Date</span>
+              <input type="date" id="inv-date" />
+            </label>
+            <label class="meta-row">
+              <span>Due</span>
+              <input type="date" id="inv-due" />
+            </label>
+          </div>
+        </div>
+
+        <div class="bill-to">
+          <div class="section-label">Bill to</div>
+          <select id="client-select" class="no-print">
+            <option value="">— Select a client or type below —</option>
+          </select>
+          <input type="text" id="client-name" placeholder="Client name" />
+          <textarea id="client-address" placeholder="Client address" rows="2"></textarea>
+        </div>
+
+        <table class="lines">
+          <thead>
+            <tr>
+              <th class="col-desc">Description</th>
+              <th class="col-qty">Qty</th>
+              <th class="col-price">Price</th>
+              <th class="col-amt">Amount</th>
+              <th class="col-rm no-print"></th>
+            </tr>
+          </thead>
+          <tbody id="lines-body"></tbody>
+        </table>
+        <button id="add-line" class="btn-ghost no-print">+ Add line</button>
+
+        <div class="totals">
+          <div class="totals-grid">
+            <div>Subtotal</div><div id="sum-subtotal">0.00</div>
+            <div>
+              Tax
+              <input type="number" id="tax-rate" min="0" step="0.01" value="0" />
+              %
+            </div>
+            <div id="sum-tax">0.00</div>
+            <div class="total-label">Total</div>
+            <div class="total-value" id="sum-total">0.00</div>
+          </div>
+        </div>
+
+        <div class="notes">
+          <div class="section-label">Notes</div>
+          <textarea id="inv-notes" rows="3" placeholder="Payment terms, thank-you note, etc."></textarea>
+        </div>
+      </div>
+
+      <div class="actions no-print">
+        <button id="save-invoice" class="btn-primary">Save invoice</button>
+        <button id="print-invoice" class="btn">Print / Save as PDF</button>
+        <button id="new-invoice" class="btn-ghost">New invoice</button>
+      </div>
+    </section>
+
+    <!-- BUSINESS TAB -->
+    <section id="tab-business" class="tab-panel">
+      <h2>Your business</h2>
+      <p class="hint">Saved locally in your browser. Appears on every invoice.</p>
+      <form id="business-form" class="form-card">
+        <label>Business name<input type="text" name="name" /></label>
+        <label>Address<textarea name="address" rows="3"></textarea></label>
+        <label>Contact (email, phone)<textarea name="contact" rows="2"></textarea></label>
+        <label>Logo (PNG/JPG/SVG)<input type="file" name="logo" accept="image/*" /></label>
+        <div class="logo-preview" id="logo-preview"></div>
+        <label>Default currency symbol<input type="text" name="currency" value="$" maxlength="3" /></label>
+        <label>Default tax rate (%)<input type="number" name="taxRate" step="0.01" value="0" /></label>
+        <div class="form-actions">
+          <button type="submit" class="btn-primary">Save</button>
+        </div>
+      </form>
+    </section>
+
+    <!-- CLIENTS TAB -->
+    <section id="tab-clients" class="tab-panel">
+      <h2>Clients</h2>
+      <p class="hint">Reusable client records. Stored locally.</p>
+      <form id="client-form" class="form-card">
+        <input type="hidden" name="id" />
+        <label>Name<input type="text" name="name" required /></label>
+        <label>Address<textarea name="address" rows="3"></textarea></label>
+        <label>Email<input type="email" name="email" /></label>
+        <div class="form-actions">
+          <button type="submit" class="btn-primary">Save client</button>
+          <button type="reset" class="btn-ghost">Clear</button>
+        </div>
+      </form>
+      <ul id="client-list" class="record-list"></ul>
+    </section>
+
+    <!-- HISTORY TAB -->
+    <section id="tab-history" class="tab-panel">
+      <h2>Saved invoices</h2>
+      <p class="hint">Click to reopen.</p>
+      <ul id="invoice-list" class="record-list"></ul>
+    </section>
+  </main>
+
+  <script type="module" src="js/main.js"></script>
+</body>
+</html>

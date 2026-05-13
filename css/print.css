@@ -1,0 +1,38 @@
+@page { size: letter; margin: 0.5in; }
+
+body {
+  background: #fff;
+  color: #000;
+}
+
+.no-print { display: none !important; }
+
+.tab-panel { display: none !important; }
+#tab-invoice.tab-panel { display: block !important; }
+
+main.wrap { padding: 0; max-width: 100%; }
+
+.invoice-sheet {
+  border: 0;
+  box-shadow: none;
+  padding: 0;
+  border-radius: 0;
+}
+
+.lines input {
+  border: 0 !important;
+  background: transparent !important;
+  padding: 4px 0 !important;
+}
+
+.bill-to input,
+.bill-to textarea,
+.notes textarea,
+.meta-row input,
+.totals-grid input {
+  border: 0 !important;
+  background: transparent !important;
+  padding: 0 !important;
+}
+
+#tax-rate { width: auto !important; }
