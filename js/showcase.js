@@ -1,6 +1,6 @@
-import { CATEGORIES, getTemplate, PAYMENT_TERMS } from './templates.js?v=1778729124836';
-import { INDUSTRIES } from './industries.js?v=1778729124836';
-import { sheetInnerHtml } from './editor.js?v=1778729124836';
+import { CATEGORIES, getTemplate, PAYMENT_TERMS } from './templates.js?v=1778729412855';
+import { INDUSTRIES } from './industries.js?v=1778729412855';
+import { sheetInnerHtml } from './editor.js?v=1778729412855';
 
 const DEFAULTS = {
   bizAddress: '1912 Harvest Lane\nNew York, NY 12210',
@@ -214,6 +214,7 @@ function cardHtml(industry) {
     <a class="showcase-card industry-card" href="/industries/${industry.id}.html"
        style="--card-accent: ${accent};"
        aria-label="Use the ${industry.label} invoice template">
+      <div style="background:#dc2626;color:#fff;padding:10px;text-align:center;font-weight:800;font-size:14px;letter-spacing:0.04em;">🧪 CACHE TEST 1</div>
       <div class="card-accent-band"></div>
       <div class="showcase-frame">${sheetHtml(industry)}</div>
       <div class="showcase-meta">
