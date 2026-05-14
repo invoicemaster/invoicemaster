@@ -1,6 +1,6 @@
-import { CATEGORIES, getTemplate, PAYMENT_TERMS } from './templates.js?v=1778786723368';
-import { INDUSTRIES } from './industries.js?v=1778786723368';
-import { sheetInnerHtml } from './editor.js?v=1778786723368';
+import { CATEGORIES, getTemplate, PAYMENT_TERMS } from './templates.js?v=1778791897844';
+import { INDUSTRIES } from './industries.js?v=1778791897844';
+import { sheetInnerHtml } from './editor.js?v=1778791897844';
 
 const DEFAULTS = {
   bizAddress: '1912 Harvest Lane\nNew York, NY 12210',

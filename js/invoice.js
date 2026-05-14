@@ -1,6 +1,6 @@
-import { getAll, get, put, remove } from './db.js?v=1778786723368';
-import { loadBusiness, renderBusinessOnInvoice } from './business.js?v=1778786723368';
-import { loadClients } from './clients.js?v=1778786723368';
+import { getAll, get, put, remove } from './db.js?v=1778791897844';
+import { loadBusiness, renderBusinessOnInvoice } from './business.js?v=1778791897844';
+import { loadClients } from './clients.js?v=1778791897844';
 import {
   isValidTemplate,
   DEFAULT_TEMPLATE,
@@ -8,8 +8,49 @@ import {
   setGallerySelection,
   getTemplate,
   LINE_TYPES,
-} from './templates.js?v=1778786723368';
-import { getIndustry } from './industries.js?v=1778786723368';
+} from './templates.js?v=1778791897844';
+import { getIndustry } from './industries.js?v=1778791897844';
+
+/* === Draft autosave =========================================================
+   While a user is creating a new invoice (no currentId), every form change
+   serializes the in-progress invoice to localStorage. On page load, if no
+   #/invoice/:id is in the URL, the draft is restored. Saving or starting a
+   New invoice clears the draft. */
+const DRAFT_KEY = 'invoice-draft-v1';
+let draftSaveTimer = null;
+let draftSuppressed = false;
+
+function scheduleDraftSave() {
+  if (draftSuppressed) return;
+  if (currentId) return; // editing a persisted invoice — user must click Save
+  clearTimeout(draftSaveTimer);
+  draftSaveTimer = setTimeout(() => {
+    try {
+      const draft = collectInvoice();
+      localStorage.setItem(DRAFT_KEY, JSON.stringify(draft));
+    } catch {
+      /* quota / serialization issue — fail silently */
+    }
+  }, 400);
+}
+
+function clearDraft() {
+  clearTimeout(draftSaveTimer);
+  try { localStorage.removeItem(DRAFT_KEY); } catch {}
+}
+
+function readDraft() {
+  try { return JSON.parse(localStorage.getItem(DRAFT_KEY) || 'null'); } catch { return null; }
+}
+
+function draftHasContent(d) {
+  if (!d) return false;
+  if (d.clientName || d.clientPhone || d.clientAddress) return true;
+  if (d.notes || d.paymentInstructions || d.reference) return true;
+  if (Array.isArray(d.lines) && d.lines.some((l) => (l && (l.desc?.trim() || Number(l.price) > 0 || Number(l.qty) > 1)))) return true;
+  if (Array.isArray(d.customFields) && d.customFields.some((f) => f && f.value)) return true;
+  return false;
+}
 
 let prefSaveTimer = null;
 function saveIndustryPrefSoon() {
@@ -270,6 +311,14 @@ export async function initInvoiceTab(opts = {}) {
   document.addEventListener('click', (e) => {
     if (e.target.matches?.('.cf-remove, .cf-add')) saveIndustryPrefSoon();
   });
+
+  // Draft autosave: any input/change inside the invoice tab snapshots to localStorage
+  document.addEventListener('input', (e) => {
+    if (e.target.closest?.('#tab-invoice')) scheduleDraftSave();
+  });
+  document.addEventListener('change', (e) => {
+    if (e.target.closest?.('#tab-invoice')) scheduleDraftSave();
+  });
   // Keep contenteditable labels single-line and plain-text
   document.addEventListener('keydown', (e) => {
     if (e.target.matches?.('.editable-label') && e.key === 'Enter') {
@@ -493,6 +542,7 @@ async function saveCurrent() {
   const id = await put('invoices', data);
   currentId = data.id || id;
   updateHashForInvoice(currentId);
+  clearDraft();
   flashButton('save-invoice', 'Saved');
   document.dispatchEvent(new CustomEvent('invoices:changed'));
 }
@@ -504,11 +554,7 @@ function updateHashForInvoice(id) {
   }
 }
 
-export async function loadInvoice(id) {
-  const inv = await get('invoices', id);
-  if (!inv) return;
-  currentId = id;
-  updateHashForInvoice(id);
+function populateFormFromInvoice(inv) {
   document.getElementById('inv-number').value = inv.number || '';
   document.getElementById('inv-date').value = inv.date || '';
   document.getElementById('inv-due').value = inv.due || '';
@@ -543,8 +589,31 @@ export async function loadInvoice(id) {
   recalc();
 }
 
+export async function loadInvoice(id) {
+  const inv = await get('invoices', id);
+  if (!inv) return;
+  currentId = id;
+  updateHashForInvoice(id);
+  clearDraft();
+  draftSuppressed = true;
+  try { populateFormFromInvoice(inv); } finally { draftSuppressed = false; }
+}
+
+/* Restore an unsaved-in-progress invoice from localStorage. Called from main.js
+   only when no #/invoice/:id route is active. Returns true if a draft was
+   restored so the caller can avoid overwriting it with defaults. */
+export function restoreDraftIfPresent() {
+  if (window.location.hash.startsWith('#/invoice/')) return false;
+  const draft = readDraft();
+  if (!draftHasContent(draft)) return false;
+  draftSuppressed = true;
+  try { populateFormFromInvoice(draft); } finally { draftSuppressed = false; }
+  return true;
+}
+
 async function resetInvoice() {
   currentId = null;
+  clearDraft();
   if (window.location.hash.startsWith('#/invoice/')) {
     history.replaceState(null, '', window.location.pathname + window.location.search);
   }

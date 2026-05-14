@@ -5,8 +5,8 @@
      browser regardless of our payload.
    - Data is chunked so large IndexedDB snapshots (logos as data URLs etc.)
      don't hit per-message size caps. */
-import { encryptWithPassphrase, decryptWithPassphrase } from './crypto.js?v=1778786723368';
-import { getAll, get, put } from './db.js?v=1778786723368';
+import { encryptWithPassphrase, decryptWithPassphrase } from './crypto.js?v=1778791897844';
+import { getAll, get, put } from './db.js?v=1778791897844';
 
 const RTC_CONFIG = {
   iceServers: [{ urls: 'stun:stun.l.google.com:19302' }],

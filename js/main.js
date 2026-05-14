@@ -1,12 +1,12 @@
-import { initBusinessForm } from './business.js?v=1778786723368';
-import { initClientsTab } from './clients.js?v=1778786723368';
-import { initInvoiceTab, refreshClientPicker, loadInvoice } from './invoice.js?v=1778786723368';
-import { renderDashboard } from './dashboard.js?v=1778786723368';
-import { renderEditor, renderBusinessForm, renderClientsForm, renderDashboardSection } from './editor.js?v=1778786723368';
-import { isValidTemplate } from './templates.js?v=1778786723368';
-import { isValidIndustry } from './industries.js?v=1778786723368';
-import { wireEmailLinks } from './contact.js?v=1778786723368';
-import { registerServiceWorker } from './pwa.js?v=1778786723368';
+import { initBusinessForm } from './business.js?v=1778791897844';
+import { initClientsTab } from './clients.js?v=1778791897844';
+import { initInvoiceTab, refreshClientPicker, loadInvoice, restoreDraftIfPresent } from './invoice.js?v=1778791897844';
+import { renderDashboard } from './dashboard.js?v=1778791897844';
+import { renderEditor, renderBusinessForm, renderClientsForm, renderDashboardSection } from './editor.js?v=1778791897844';
+import { isValidTemplate } from './templates.js?v=1778791897844';
+import { isValidIndustry } from './industries.js?v=1778791897844';
+import { wireEmailLinks } from './contact.js?v=1778791897844';
+import { registerServiceWorker } from './pwa.js?v=1778791897844';
 
 function getInitialTemplate() {
   const meta = document.querySelector('meta[name="initial-template"]');
@@ -82,6 +82,9 @@ async function boot() {
   initBusinessForm();
   initClientsTab(() => refreshClientPicker());
   await initInvoiceTab({ initialTemplate: getInitialTemplate(), initialIndustry: getInitialIndustry() });
+  // If there's no specific invoice in the URL, restore any unsaved draft.
+  // handleHashRoute will override this if the URL points to a saved invoice.
+  restoreDraftIfPresent();
   await handleHashRoute();
   wireEmailLinks();
   registerServiceWorker();

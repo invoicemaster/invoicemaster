@@ -1,4 +1,4 @@
-import { getAll, put, remove } from './db.js?v=1778786723368';
+import { getAll, put, remove } from './db.js?v=1778791897844';
 
 export async function loadClients() {
   return await getAll('clients');

@@ -2,10 +2,11 @@
    We re-add the printable safe-area as padding on the invoice sheet below. */
 @page { size: letter; margin: 0; }
 
-body {
+html, body {
   background: #fff;
   color: #000;
-  margin: 0;
+  margin: 0 !important;
+  padding: 0 !important;
 }
 
 .no-print { display: none !important; }
@@ -13,18 +14,33 @@ body {
 .tab-panel { display: none !important; }
 #tab-invoice.tab-panel { display: block !important; }
 
-main.wrap { padding: 0; max-width: 100%; }
+main.wrap { padding: 0 !important; margin: 0 !important; max-width: 100%; }
 
-.sheet-fit { overflow: visible !important; margin: 0 !important; padding: 0 !important; }
+.sheet-fit {
+  overflow: visible !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  /* avoid any stray height contribution from horizontal-scroll defaults */
+  height: auto !important;
+}
 
 .invoice-sheet {
   box-shadow: none;
-  padding: 0.5in;
+  padding: 0.4in;
   border-radius: 0;
   border: 0;
+  margin: 0 !important;
   width: 100% !important;
   max-width: 100% !important;
+  /* Keep the whole invoice on a single page when possible */
+  page-break-inside: avoid;
+  break-inside: avoid;
 }
+
+/* Block any stray sibling content from forcing a second page */
+body > *:not(main) { display: none !important; }
+main > *:not(#tab-invoice) { display: none !important; }
+#tab-invoice > *:not(.sheet-fit) { display: none !important; }
 
 /* Print accent rules/borders that define each template (templates are
    ink-light by design — only thin accent lines need to render in color). */
