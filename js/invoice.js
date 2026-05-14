@@ -1,6 +1,6 @@
-import { getAll, get, put, remove } from './db.js?v=1778784886142';
-import { loadBusiness, renderBusinessOnInvoice } from './business.js?v=1778784886142';
-import { loadClients } from './clients.js?v=1778784886142';
+import { getAll, get, put, remove } from './db.js?v=1778785944366';
+import { loadBusiness, renderBusinessOnInvoice } from './business.js?v=1778785944366';
+import { loadClients } from './clients.js?v=1778785944366';
 import {
   isValidTemplate,
   DEFAULT_TEMPLATE,
@@ -8,8 +8,8 @@ import {
   setGallerySelection,
   getTemplate,
   LINE_TYPES,
-} from './templates.js?v=1778784886142';
-import { getIndustry } from './industries.js?v=1778784886142';
+} from './templates.js?v=1778785944366';
+import { getIndustry } from './industries.js?v=1778785944366';
 
 let prefSaveTimer = null;
 function saveIndustryPrefSoon() {

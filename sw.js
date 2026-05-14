@@ -8,7 +8,7 @@
    The VERSION constant is bumped by bust-cache.mjs so a single command
    invalidates every entry. */
 
-const VERSION = '1778784886142';
+const VERSION = '1778785944366';
 const CACHE = `invoicemaster-${VERSION}`;
 
 const PRECACHE = [
