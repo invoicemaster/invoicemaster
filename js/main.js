@@ -1,11 +1,12 @@
-import { initBusinessForm } from './business.js?v=1778732496823';
-import { initClientsTab } from './clients.js?v=1778732496823';
-import { initInvoiceTab, refreshClientPicker, loadInvoice } from './invoice.js?v=1778732496823';
-import { renderDashboard } from './dashboard.js?v=1778732496823';
-import { renderEditor, renderBusinessForm, renderClientsForm, renderDashboardSection } from './editor.js?v=1778732496823';
-import { isValidTemplate } from './templates.js?v=1778732496823';
-import { isValidIndustry } from './industries.js?v=1778732496823';
-import { wireEmailLinks } from './contact.js?v=1778732496823';
+import { initBusinessForm } from './business.js?v=1778733427221';
+import { initClientsTab } from './clients.js?v=1778733427221';
+import { initInvoiceTab, refreshClientPicker, loadInvoice } from './invoice.js?v=1778733427221';
+import { renderDashboard } from './dashboard.js?v=1778733427221';
+import { renderEditor, renderBusinessForm, renderClientsForm, renderDashboardSection } from './editor.js?v=1778733427221';
+import { isValidTemplate } from './templates.js?v=1778733427221';
+import { isValidIndustry } from './industries.js?v=1778733427221';
+import { wireEmailLinks } from './contact.js?v=1778733427221';
+import { registerServiceWorker } from './pwa.js?v=1778733427221';
 
 function getInitialTemplate() {
   const meta = document.querySelector('meta[name="initial-template"]');
@@ -83,6 +84,7 @@ async function boot() {
   await initInvoiceTab({ initialTemplate: getInitialTemplate(), initialIndustry: getInitialIndustry() });
   await handleHashRoute();
   wireEmailLinks();
+  registerServiceWorker();
   window.addEventListener('hashchange', handleHashRoute);
   document.addEventListener('invoices:changed', () => {
     const active = document.querySelector('.tab.active')?.dataset.tab;

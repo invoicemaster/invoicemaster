@@ -70,4 +70,18 @@ for (const f of files.filter((p) => p.endsWith('.js') && p.includes('/js/'))) {
   }
 }
 
+// Bump the service worker version so a new SW activates and the old cache is pruned
+const swPath = join(ROOT, 'sw.js');
+try {
+  let sw = readFileSync(swPath, 'utf8');
+  const before = sw;
+  sw = sw.replace(/const VERSION = ['"][^'"]*['"];/, `const VERSION = '${v}';`);
+  if (sw !== before) {
+    writeFileSync(swPath, sw);
+    count++;
+  }
+} catch {
+  // sw.js doesn't exist yet — fine
+}
+
 console.log(`Cache-busted ${count} files with v=${v}`);
