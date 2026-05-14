@@ -790,36 +790,23 @@ h2 { margin: 0 0 4px 0; font-size: 20px; }
 /* ===== Home page & template-page chrome ===== */
 .home-nav {
   display: flex;
-  gap: 14px;
+  gap: 18px;
   font-size: 14px;
-}
-.home-nav a { color: var(--muted); text-decoration: none; }
-.home-nav a:hover { color: var(--ink); }
-
-/* Secondary tab bar for editor pages — sits directly under the topbar */
-.tab-bar {
-  background: var(--surface);
-  border-bottom: 1px solid var(--line);
-  position: sticky;
-  top: 56px;
-  z-index: 9;
-}
-.tab-bar .wrap {
-  display: flex;
-  align-items: center;
-  height: 44px;
   overflow-x: auto;
   -webkit-overflow-scrolling: touch;
 }
-.tab-bar .tabs {
-  display: flex;
-  gap: 4px;
-  height: 100%;
-  align-items: center;
+.home-nav a {
+  color: var(--muted);
+  text-decoration: none;
+  white-space: nowrap;
+  padding: 6px 2px;
+  border-bottom: 2px solid transparent;
 }
-@media (max-width: 640px) {
-  .tab-bar { top: 0; position: static; }
-  .tab-bar .wrap { padding-top: 8px; padding-bottom: 8px; }
+.home-nav a:hover { color: var(--ink); }
+.home-nav a.active {
+  color: var(--ink);
+  border-bottom-color: var(--ink);
+  font-weight: 600;
 }
 
 .hero {

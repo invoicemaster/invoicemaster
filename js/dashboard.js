@@ -1,7 +1,7 @@
-import { getAll, put } from './db.js?v=1778731011143';
-import { loadInvoice, deleteInvoice } from './invoice.js?v=1778731011143';
-import { loadBusiness } from './business.js?v=1778731011143';
-import { STATUSES } from './templates.js?v=1778731011143';
+import { getAll, put } from './db.js?v=1778731280417';
+import { loadInvoice, deleteInvoice } from './invoice.js?v=1778731280417';
+import { loadBusiness } from './business.js?v=1778731280417';
+import { STATUSES } from './templates.js?v=1778731280417';
 
 let state = {
   filter: 'all',

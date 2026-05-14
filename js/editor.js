@@ -1,4 +1,4 @@
-import { PAYMENT_TERMS, STATUSES } from './templates.js?v=1778731011143';
+import { PAYMENT_TERMS, STATUSES } from './templates.js?v=1778731280417';
 
 function paymentTermsOptions(selected = 'net_30') {
   return PAYMENT_TERMS.map(

@@ -1,10 +1,10 @@
-import { initBusinessForm } from './business.js?v=1778731011143';
-import { initClientsTab } from './clients.js?v=1778731011143';
-import { initInvoiceTab, refreshClientPicker, loadInvoice } from './invoice.js?v=1778731011143';
-import { renderDashboard } from './dashboard.js?v=1778731011143';
-import { renderEditor, renderBusinessForm, renderClientsForm, renderDashboardSection } from './editor.js?v=1778731011143';
-import { isValidTemplate } from './templates.js?v=1778731011143';
-import { isValidIndustry } from './industries.js?v=1778731011143';
+import { initBusinessForm } from './business.js?v=1778731280417';
+import { initClientsTab } from './clients.js?v=1778731280417';
+import { initInvoiceTab, refreshClientPicker, loadInvoice } from './invoice.js?v=1778731280417';
+import { renderDashboard } from './dashboard.js?v=1778731280417';
+import { renderEditor, renderBusinessForm, renderClientsForm, renderDashboardSection } from './editor.js?v=1778731280417';
+import { isValidTemplate } from './templates.js?v=1778731280417';
+import { isValidIndustry } from './industries.js?v=1778731280417';
 
 function getInitialTemplate() {
   const meta = document.querySelector('meta[name="initial-template"]');
@@ -19,8 +19,9 @@ function getInitialIndustry() {
 }
 
 function switchTab(name) {
-  document.querySelectorAll('.tab').forEach((b) => b.classList.toggle('active', b.dataset.tab === name));
   document.querySelectorAll('.tab-panel').forEach((p) => p.classList.toggle('active', p.id === `tab-${name}`));
+  // Highlight the topbar nav link for the active tab
+  document.querySelectorAll('#topnav a[data-tab]').forEach((a) => a.classList.toggle('active', a.dataset.tab === name));
   // The SEO page-header (breadcrumb + H1 + intro) describes the invoice template,
   // so only show it on the Invoice tab. Stays in DOM on other tabs for crawlers.
   const pageHeader = document.querySelector('.page-header');
@@ -30,10 +31,19 @@ function switchTab(name) {
 }
 
 function initTabs() {
-  document.getElementById('tabs').addEventListener('click', (e) => {
-    const btn = e.target.closest('.tab');
-    if (!btn) return;
-    switchTab(btn.dataset.tab);
+  // Intercept clicks on topbar nav links that map to in-page tabs.
+  // If we're on an editor page (the matching tab-panel exists), switch tab locally
+  // instead of navigating; otherwise let the browser follow the href.
+  document.addEventListener('click', (e) => {
+    const link = e.target.closest('a[data-tab]');
+    if (!link) return;
+    const tab = link.dataset.tab;
+    if (document.getElementById(`tab-${tab}`)) {
+      e.preventDefault();
+      // Update URL hash so refresh keeps the tab without re-navigating
+      history.replaceState(null, '', `${window.location.pathname}#${tab}`);
+      switchTab(tab);
+    }
   });
 }
 
@@ -49,11 +59,18 @@ function hydrateShell() {
 }
 
 async function handleHashRoute() {
-  const m = window.location.hash.match(/^#\/invoice\/(\d+)$/);
+  const h = window.location.hash;
+  const m = h.match(/^#\/invoice\/(\d+)$/);
   if (m) {
     await loadInvoice(Number(m[1]));
-    const tab = document.querySelector('.tab[data-tab="invoice"]');
-    if (tab) switchTab('invoice');
+    switchTab('invoice');
+    return;
+  }
+  // Plain tab hash, e.g. #business, #clients, #dashboard
+  const tab = h.replace(/^#/, '');
+  if (['invoice', 'business', 'clients', 'dashboard'].includes(tab)
+      && document.getElementById(`tab-${tab}`)) {
+    switchTab(tab);
   }
 }
 

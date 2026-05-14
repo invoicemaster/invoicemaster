@@ -1,4 +1,4 @@
-import { renderGalleryAsLinks } from './templates.js?v=1778731011143';
+import { renderGalleryAsLinks } from './templates.js?v=1778731280417';
 
 const container = document.getElementById('cross-links-gallery');
 if (container) {
