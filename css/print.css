@@ -1,8 +1,11 @@
-@page { size: letter; margin: 0.5in; }
+/* margin: 0 suppresses the browser's auto-added title/date/URL header and footer.
+   We re-add the printable safe-area as padding on the invoice sheet below. */
+@page { size: letter; margin: 0; }
 
 body {
   background: #fff;
   color: #000;
+  margin: 0;
 }
 
 .no-print { display: none !important; }
@@ -16,7 +19,7 @@ main.wrap { padding: 0; max-width: 100%; }
 
 .invoice-sheet {
   box-shadow: none;
-  padding: 0;
+  padding: 0.5in;
   border-radius: 0;
   border: 0;
   width: 100% !important;

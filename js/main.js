@@ -1,12 +1,12 @@
-import { initBusinessForm } from './business.js?v=1778733427221';
-import { initClientsTab } from './clients.js?v=1778733427221';
-import { initInvoiceTab, refreshClientPicker, loadInvoice } from './invoice.js?v=1778733427221';
-import { renderDashboard } from './dashboard.js?v=1778733427221';
-import { renderEditor, renderBusinessForm, renderClientsForm, renderDashboardSection } from './editor.js?v=1778733427221';
-import { isValidTemplate } from './templates.js?v=1778733427221';
-import { isValidIndustry } from './industries.js?v=1778733427221';
-import { wireEmailLinks } from './contact.js?v=1778733427221';
-import { registerServiceWorker } from './pwa.js?v=1778733427221';
+import { initBusinessForm } from './business.js?v=1778784886142';
+import { initClientsTab } from './clients.js?v=1778784886142';
+import { initInvoiceTab, refreshClientPicker, loadInvoice } from './invoice.js?v=1778784886142';
+import { renderDashboard } from './dashboard.js?v=1778784886142';
+import { renderEditor, renderBusinessForm, renderClientsForm, renderDashboardSection } from './editor.js?v=1778784886142';
+import { isValidTemplate } from './templates.js?v=1778784886142';
+import { isValidIndustry } from './industries.js?v=1778784886142';
+import { wireEmailLinks } from './contact.js?v=1778784886142';
+import { registerServiceWorker } from './pwa.js?v=1778784886142';
 
 function getInitialTemplate() {
   const meta = document.querySelector('meta[name="initial-template"]');
