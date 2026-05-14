@@ -1,4 +1,5 @@
 import { PAYMENT_TERMS, STATUSES } from './templates.js?v=1778791897844';
+import { CURRENCIES } from './currency.js?v=1778791897844';
 
 function paymentTermsOptions(selected = 'net_30') {
   return PAYMENT_TERMS.map(
@@ -8,6 +9,10 @@ function paymentTermsOptions(selected = 'net_30') {
 
 function statusOptions() {
   return STATUSES.map((s) => `<option value="${s.value}">${s.label}</option>`).join('');
+}
+
+function currencyOptions() {
+  return CURRENCIES.map((c) => `<option value="${c.code}">${c.label}</option>`).join('');
 }
 
 function esc(s) {
@@ -108,6 +113,7 @@ export function sheetInnerHtml(opts = {}) {
       </div>
       <div class="invoice-meta">
         <div class="invoice-title ${isEditor ? 'editable-label' : 'label-text'}" data-label-key="invoice-title"${isEditor ? ' contenteditable="true"' : ''}>${labelText('invoice-title', 'INVOICE')}</div>
+        <div class="paid-stamp"${id('paid-stamp')} hidden>PAID <span class="paid-date"${id('paid-stamp-date')}></span></div>
         <label class="meta-row">
           ${editable('number', labelText('number', 'Number'))}
           ${textInput('inv-number', { placeholder: 'INV-0001' })}
@@ -259,7 +265,9 @@ export function renderEditor(root) {
 
     <div class="actions no-print">
       <button id="save-invoice" class="btn-primary">Save invoice</button>
-      <button id="print-invoice" class="btn">Print / Save as PDF</button>
+      <button id="download-pdf" class="btn">Download PDF</button>
+      <button id="email-invoice" class="btn">Email</button>
+      <button id="print-invoice" class="btn">Print</button>
       <button id="new-invoice" class="btn-ghost">New invoice</button>
     </div>
   `;
@@ -283,7 +291,7 @@ export function renderBusinessForm(root) {
       <div class="logo-preview" id="logo-preview"></div>
       <label>Signature (PNG/JPG/SVG, transparent background recommended)<input type="file" name="signature" accept="image/*" /></label>
       <div class="signature-preview" id="signature-preview"></div>
-      <label>Default currency symbol<input type="text" name="currency" value="$" maxlength="3" /></label>
+      <label>Default currency<select name="currency">${currencyOptions()}</select></label>
       <label>Default tax rate (%)<input type="number" name="taxRate" step="0.01" value="0" /></label>
       <label>Default payment terms
         <select name="paymentTerms">${paymentTermsOptions()}</select>
@@ -297,6 +305,19 @@ export function renderBusinessForm(root) {
     </form>
 
     <div id="sync-mount" class="sync-mount"></div>
+
+    <div class="backup-card">
+      <h3>Backup &amp; restore</h3>
+      <p class="hint">Your invoices live only in this browser. Export a JSON backup any time — restore it on a new browser or after clearing site data.</p>
+      <div class="backup-actions">
+        <button type="button" id="backup-export" class="btn">Export backup</button>
+        <label class="btn-ghost" for="backup-import-input" style="cursor:pointer">
+          Import backup
+          <input type="file" id="backup-import-input" accept="application/json,.json" hidden />
+        </label>
+      </div>
+      <p id="backup-status" class="backup-status" aria-live="polite"></p>
+    </div>
   `;
 }
 

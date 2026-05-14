@@ -2,6 +2,7 @@ import { getAll, put } from './db.js?v=1778791897844';
 import { loadInvoice, deleteInvoice } from './invoice.js?v=1778791897844';
 import { loadBusiness } from './business.js?v=1778791897844';
 import { STATUSES } from './templates.js?v=1778791897844';
+import { formatMoney } from './currency.js?v=1778791897844';
 
 let state = {
   filter: 'all',
@@ -133,11 +134,12 @@ function filterAndSort(invoices) {
   if (state.search) {
     const q = state.search;
     out = out.filter((inv) => {
-      return (
-        (inv.number || '').toLowerCase().includes(q) ||
-        (inv.clientName || '').toLowerCase().includes(q) ||
-        (inv.reference || '').toLowerCase().includes(q)
-      );
+      if ((inv.number || '').toLowerCase().includes(q)) return true;
+      if ((inv.clientName || '').toLowerCase().includes(q)) return true;
+      if ((inv.reference || '').toLowerCase().includes(q)) return true;
+      if ((inv.notes || '').toLowerCase().includes(q)) return true;
+      if (Array.isArray(inv.lines) && inv.lines.some((l) => (l.desc || '').toLowerCase().includes(q))) return true;
+      return false;
     });
   }
   const sorted = [...out];
@@ -161,8 +163,32 @@ function filterAndSort(invoices) {
 async function markStatus(inv, status) {
   inv.status = status;
   inv.updatedAt = Date.now();
+  if (status === 'paid' && !inv.paidAt) inv.paidAt = new Date().toISOString().slice(0, 10);
   await put('invoices', inv);
   document.dispatchEvent(new CustomEvent('invoices:changed'));
+}
+
+async function duplicateInvoice(inv) {
+  const clone = { ...inv };
+  delete clone.id;
+  clone.number = nextInvoiceNumber(inv.number);
+  clone.date = new Date().toISOString().slice(0, 10);
+  clone.due = '';
+  clone.status = 'draft';
+  delete clone.paidAt;
+  clone.updatedAt = Date.now();
+  await put('invoices', clone);
+  document.dispatchEvent(new CustomEvent('invoices:changed'));
+}
+
+function nextInvoiceNumber(prev) {
+  if (!prev) return '';
+  // Bump the trailing numeric segment, preserving any prefix and zero-padding
+  const m = prev.match(/^(.*?)(\d+)(\D*)$/);
+  if (!m) return `${prev}-copy`;
+  const [, prefix, num, suffix] = m;
+  const next = String(Number(num) + 1).padStart(num.length, '0');
+  return `${prefix}${next}${suffix}`;
 }
 
 function statusLabel(value) {
@@ -219,6 +245,7 @@ function renderList(allInvoices, currency) {
         ${eff !== 'paid' ? '<button class="btn-ghost" data-action="paid">Mark paid</button>' : ''}
         ${eff === 'draft' ? '<button class="btn-ghost" data-action="sent">Mark sent</button>' : ''}
         <button class="btn-ghost" data-action="open">Open</button>
+        <button class="btn-ghost" data-action="duplicate">Duplicate</button>
         <button class="btn-ghost" data-action="delete">Delete</button>
       </div>
     `;
@@ -241,6 +268,9 @@ function renderList(allInvoices, currency) {
       } else if (action === 'open') {
         await loadInvoice(inv.id);
         if (switchToInvoice) switchToInvoice();
+      } else if (action === 'duplicate') {
+        await duplicateInvoice(inv);
+        await renderDashboard();
       } else if (action === 'delete') {
         if (!confirm(`Delete invoice ${inv.number || ''}?`)) return;
         await deleteInvoice(inv.id);

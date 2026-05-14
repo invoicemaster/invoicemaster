@@ -22,12 +22,18 @@ let draftSuppressed = false;
 
 function scheduleDraftSave() {
   if (draftSuppressed) return;
-  if (currentId) return; // editing a persisted invoice — user must click Save
   clearTimeout(draftSaveTimer);
-  draftSaveTimer = setTimeout(() => {
+  draftSaveTimer = setTimeout(async () => {
     try {
-      const draft = collectInvoice();
-      localStorage.setItem(DRAFT_KEY, JSON.stringify(draft));
+      const data = collectInvoice();
+      if (currentId) {
+        // Editing a saved invoice — autosave straight to the record
+        data.id = currentId;
+        await put('invoices', data);
+      } else {
+        // New invoice — keep a draft in localStorage so reload restores it
+        localStorage.setItem(DRAFT_KEY, JSON.stringify(data));
+      }
     } catch {
       /* quota / serialization issue — fail silently */
     }
@@ -85,6 +91,7 @@ async function clearIndustryPref(industryId) {
 let currentId = null;
 let currency = '$';
 let currentIndustry = null;
+let currentPaidAt = '';
 
 function effectiveConfig(templateId, industry) {
   const tpl = getTemplate(templateId);
@@ -264,9 +271,21 @@ function readCustomFields() {
   return out;
 }
 
-function applyStatus(status) {
+function applyStatus(status, paidAt) {
   const pill = document.querySelector('.status-pill');
   if (pill) pill.dataset.status = status || 'draft';
+  const sheet = document.getElementById('invoice-sheet');
+  if (sheet) sheet.dataset.status = status || 'draft';
+  const stamp = document.getElementById('paid-stamp');
+  const stampDate = document.getElementById('paid-stamp-date');
+  if (stamp) {
+    if (status === 'paid' && paidAt) {
+      stamp.hidden = false;
+      if (stampDate) stampDate.textContent = paidAt;
+    } else {
+      stamp.hidden = true;
+    }
+  }
 }
 
 function onPaymentTermsChange() {
@@ -347,7 +366,34 @@ export async function initInvoiceTab(opts = {}) {
   document.getElementById('save-invoice').addEventListener('click', saveCurrent);
   document.getElementById('new-invoice').addEventListener('click', resetInvoice);
   document.getElementById('print-invoice').addEventListener('click', () => window.print());
-  document.getElementById('inv-status').addEventListener('change', (e) => applyStatus(e.target.value));
+  document.getElementById('email-invoice').addEventListener('click', emailCurrentInvoice);
+  document.getElementById('download-pdf').addEventListener('click', async (e) => {
+    const btn = e.currentTarget;
+    const orig = btn.textContent;
+    btn.textContent = 'Building PDF…';
+    btn.disabled = true;
+    try {
+      const { downloadInvoicePDF } = await import('./pdf.js');
+      const number = (document.getElementById('inv-number').value || 'invoice').trim();
+      await downloadInvoicePDF({ filename: `${number}.pdf` });
+      btn.textContent = 'Downloaded';
+    } catch (err) {
+      console.error(err);
+      btn.textContent = 'Failed — try Print';
+    } finally {
+      setTimeout(() => { btn.textContent = orig; btn.disabled = false; }, 1500);
+    }
+  });
+  document.getElementById('inv-status').addEventListener('change', (e) => {
+    const newStatus = e.target.value;
+    // When marking paid for the first time, capture today as paidAt
+    if (newStatus === 'paid' && !currentPaidAt) {
+      currentPaidAt = today();
+    } else if (newStatus !== 'paid') {
+      currentPaidAt = '';
+    }
+    applyStatus(newStatus, currentPaidAt);
+  });
   document.getElementById('inv-payment-terms').addEventListener('change', onPaymentTermsChange);
 
   document.getElementById('client-select').addEventListener('change', onClientPick);
@@ -510,12 +556,14 @@ async function suggestNumber() {
 }
 
 function collectInvoice() {
+  const status = document.getElementById('inv-status').value;
   return {
     number: document.getElementById('inv-number').value.trim(),
     date: document.getElementById('inv-date').value,
     due: document.getElementById('inv-due').value,
     reference: document.getElementById('inv-reference').value.trim(),
-    status: document.getElementById('inv-status').value,
+    status,
+    paidAt: status === 'paid' ? (currentPaidAt || today()) : '',
     clientName: document.getElementById('client-name').value.trim(),
     clientPhone: document.getElementById('client-phone').value.trim(),
     clientAddress: document.getElementById('client-address').value.trim(),
@@ -581,7 +629,8 @@ function populateFormFromInvoice(inv) {
   applyTemplate(inv.template || 'freelancer', presetFields);
   if (inv.labels) applyLabels(inv.labels);
   setIndustryBadge();
-  applyStatus(inv.status || 'draft');
+  currentPaidAt = inv.paidAt || '';
+  applyStatus(inv.status || 'draft', currentPaidAt);
   onPaymentTermsChange();
   document.getElementById('lines-body').innerHTML = '';
   (inv.lines || []).forEach((l) => addLine(l));
@@ -613,6 +662,7 @@ export function restoreDraftIfPresent() {
 
 async function resetInvoice() {
   currentId = null;
+  currentPaidAt = '';
   clearDraft();
   if (window.location.hash.startsWith('#/invoice/')) {
     history.replaceState(null, '', window.location.pathname + window.location.search);
@@ -645,6 +695,48 @@ async function resetInvoice() {
 export async function deleteInvoice(id) {
   await remove('invoices', id);
   if (currentId === id) currentId = null;
+}
+
+async function emailCurrentInvoice() {
+  const inv = collectInvoice();
+  const biz = await loadBusiness();
+  const number = inv.number || 'Invoice';
+  const bizName = biz.name || 'us';
+
+  // Compute total
+  const sub = (inv.lines || []).reduce((s, l) => s + (l.qty || 0) * (l.price || 0), 0);
+  const taxed = Math.max(0, sub - (inv.discount || 0));
+  const total = taxed + taxed * ((inv.taxRate || 0) / 100);
+  const cur = biz.currency || '$';
+
+  // Best-effort email lookup: match client by name in the clients store
+  let toEmail = '';
+  if (inv.clientName) {
+    try {
+      const clients = await loadClients();
+      const match = clients.find((c) => (c.name || '').trim().toLowerCase() === inv.clientName.trim().toLowerCase());
+      if (match) toEmail = match.email || '';
+    } catch {}
+  }
+
+  const subject = `Invoice ${number} from ${bizName}`;
+  const lines = [
+    `Hi${inv.clientName ? ' ' + inv.clientName.split(' ')[0] : ''},`,
+    '',
+    `Please find invoice ${number} attached.`,
+    '',
+    `Amount due: ${cur}${total.toFixed(2)}`,
+    inv.due ? `Due: ${inv.due}` : '',
+    '',
+    inv.paymentInstructions ? `Payment: ${inv.paymentInstructions}` : '',
+    '',
+    `Thanks,`,
+    bizName,
+  ].filter((l) => l !== null);
+  const body = lines.join('\n');
+
+  const mailto = `mailto:${encodeURIComponent(toEmail)}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+  window.location.href = mailto;
 }
 
 function flashButton(id, msg) {

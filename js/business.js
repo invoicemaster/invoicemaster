@@ -1,6 +1,8 @@
 import { get, put } from './db.js?v=1778791897844';
 import { DEFAULT_TEMPLATE, renderGallery, setGallerySelection } from './templates.js?v=1778791897844';
 import { renderSyncCard } from './sync-ui.js?v=1778791897844';
+import { exportAll, downloadBackup, importAll, readJsonFile } from './backup.js?v=1778791897844';
+import { normalizeCurrency } from './currency.js?v=1778791897844';
 
 const BIZ_ID = 'me';
 
@@ -43,7 +45,7 @@ export function initBusinessForm() {
     form.contact.value = biz.contact || '';
     form.taxId.value = biz.taxId || '';
     form.license.value = biz.license || '';
-    form.currency.value = biz.currency || '$';
+    form.currency.value = normalizeCurrency(biz.currency);
     form.taxRate.value = biz.taxRate || 0;
     form.paymentTerms.value = biz.paymentTerms || 'net_30';
     form.paymentInstructions.value = biz.paymentInstructions || '';
@@ -76,6 +78,8 @@ export function initBusinessForm() {
     });
   }
 
+  wireBackupRestore();
+
   form.addEventListener('submit', async (e) => {
     e.preventDefault();
     const current = await loadBusiness();
@@ -87,7 +91,7 @@ export function initBusinessForm() {
       license: form.license.value.trim(),
       logo: form.dataset.logo || current.logo || '',
       signature: form.dataset.signature || current.signature || '',
-      currency: form.currency.value.trim() || '$',
+      currency: normalizeCurrency(form.currency.value),
       taxRate: parseFloat(form.taxRate.value) || 0,
       template: form.template.value || DEFAULT_TEMPLATE,
       paymentTerms: form.paymentTerms.value || 'net_30',
@@ -136,4 +140,52 @@ function flash(form, msg) {
   const original = btn.textContent;
   btn.textContent = msg;
   setTimeout(() => { btn.textContent = original; }, 1200);
+}
+
+function wireBackupRestore() {
+  const exportBtn = document.getElementById('backup-export');
+  const importInput = document.getElementById('backup-import-input');
+  const status = document.getElementById('backup-status');
+  if (!exportBtn || !importInput || !status) return;
+
+  const setStatus = (msg, kind = 'info') => {
+    status.textContent = msg;
+    status.dataset.kind = kind;
+  };
+
+  exportBtn.addEventListener('click', async () => {
+    try {
+      const bundle = await exportAll();
+      downloadBackup(bundle);
+      const counts = bundle.data;
+      setStatus(
+        `Downloaded backup — ${counts.invoices.length} invoices, ${counts.clients.length} clients.`,
+        'ok'
+      );
+    } catch (e) {
+      setStatus(`Export failed: ${e.message || e}`, 'err');
+    }
+  });
+
+  importInput.addEventListener('change', async (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+    if (!confirm('Importing will MERGE the backup with your current data. Records with the same ID will be overwritten. Continue?')) {
+      importInput.value = '';
+      return;
+    }
+    try {
+      const bundle = await readJsonFile(file);
+      const summary = await importAll(bundle, { mode: 'merge' });
+      setStatus(
+        `Imported — ${summary.invoices} invoices, ${summary.clients} clients, ${summary.industryPrefs} prefs. Reload to see them.`,
+        'ok'
+      );
+      document.dispatchEvent(new CustomEvent('invoices:changed'));
+    } catch (e) {
+      setStatus(`Import failed: ${e.message || e}`, 'err');
+    } finally {
+      importInput.value = '';
+    }
+  });
 }

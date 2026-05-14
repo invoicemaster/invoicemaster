@@ -30,22 +30,30 @@ const DISMISS_KEY = 'pwa-install-dismissed';
 const DISMISS_WINDOW = 7 * 24 * 60 * 60 * 1000; // 7 days
 
 function setupInstallButton() {
+  const log = (...a) => console.info('[PWA]', ...a);
+
   // Already installed? Don't show.
   const standalone = window.matchMedia('(display-mode: standalone)').matches
     || window.navigator.standalone === true;
-  if (standalone) return;
+  if (standalone) { log('Already installed (standalone mode) — button hidden'); return; }
 
   // Recently dismissed? Wait it out.
   const dismissedAt = Number(localStorage.getItem(DISMISS_KEY) || 0);
-  if (dismissedAt && Date.now() - dismissedAt < DISMISS_WINDOW) return;
+  if (dismissedAt && Date.now() - dismissedAt < DISMISS_WINDOW) {
+    const daysLeft = Math.ceil((DISMISS_WINDOW - (Date.now() - dismissedAt)) / 86400000);
+    log(`Dismissed recently — will show again in ~${daysLeft}d. Run localStorage.removeItem('${DISMISS_KEY}') to clear.`);
+    return;
+  }
 
   const btn = createButton();
+  log('Listening for beforeinstallprompt. If you never see "fired", Chrome thinks the PWA criteria are not met (check Application → Manifest in DevTools).');
 
   // Chrome / Edge / other Chromium — wait for the criteria to be met
   window.addEventListener('beforeinstallprompt', (e) => {
     e.preventDefault();
     deferredPrompt = e;
     revealButton(btn);
+    log('beforeinstallprompt fired — install button shown');
   });
 
   // iOS Safari — no beforeinstallprompt event. Detect and show with instructions.
@@ -53,6 +61,7 @@ function setupInstallButton() {
   if (isIos) {
     btn.dataset.platform = 'ios';
     revealButton(btn);
+    log('iOS detected — showing install instructions button');
   }
 
   btn.querySelector('.pwa-install-action').addEventListener('click', async () => {

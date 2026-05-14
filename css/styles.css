@@ -1167,6 +1167,81 @@ h2 { margin: 0 0 4px 0; font-size: 20px; }
   margin-left: 4px;
 }
 .footer-tag { line-height: 1.5; max-width: 320px; }
+.paid-stamp {
+  display: inline-block;
+  margin-top: 8px;
+  padding: 6px 14px;
+  border: 2px solid #15803d;
+  color: #15803d;
+  font-weight: 800;
+  font-size: 13px;
+  letter-spacing: 0.12em;
+  border-radius: 4px;
+  transform: rotate(-3deg);
+  font-family: ui-monospace, "SF Mono", Menlo, monospace;
+}
+.paid-stamp[hidden] { display: none; }
+.paid-stamp .paid-date { font-weight: 600; margin-left: 6px; letter-spacing: 0; }
+
+.backup-card {
+  margin-top: 24px;
+  padding: 20px 24px;
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+}
+.backup-card h3 { margin: 0 0 6px; font-size: 17px; }
+.backup-card .hint { margin: 0 0 14px; }
+.backup-actions { display: flex; gap: 10px; flex-wrap: wrap; }
+.backup-status { margin: 14px 0 0; font-size: 13px; min-height: 1em; }
+.backup-status[data-kind="ok"] { color: #15803d; }
+.backup-status[data-kind="err"] { color: #b91c1c; }
+
+.legal-page {
+  max-width: 740px;
+  padding-top: 32px;
+  padding-bottom: 64px;
+  line-height: 1.65;
+  color: var(--ink);
+}
+.legal-page h1 {
+  font-size: 32px;
+  margin: 0 0 6px;
+  letter-spacing: -0.02em;
+}
+.legal-meta {
+  color: var(--muted);
+  font-size: 13px;
+  margin: 0 0 28px;
+}
+.legal-lede {
+  font-size: 17px;
+  color: var(--ink);
+  margin: 0 0 32px;
+  padding: 16px 20px;
+  background: var(--surface);
+  border-left: 3px solid var(--accent, #f59e0b);
+  border-radius: 0 6px 6px 0;
+}
+.legal-page h2 {
+  font-size: 20px;
+  font-weight: 700;
+  margin: 36px 0 12px;
+  letter-spacing: -0.01em;
+}
+.legal-page p { margin: 0 0 14px; }
+.legal-page ul { margin: 0 0 14px 20px; padding: 0; }
+.legal-page li { margin-bottom: 6px; }
+.legal-page code {
+  font-family: ui-monospace, "SF Mono", Menlo, monospace;
+  font-size: 13px;
+  background: var(--surface);
+  padding: 1px 6px;
+  border-radius: 4px;
+}
+.legal-page a { color: var(--ink); text-decoration: underline; text-decoration-thickness: 1px; text-underline-offset: 2px; }
+.legal-page a:hover { text-decoration-thickness: 2px; }
+
 .footer-feedback {
   flex-basis: 100%;
   grid-column: 1 / -1;
