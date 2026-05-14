@@ -12,12 +12,35 @@ body {
 
 main.wrap { padding: 0; max-width: 100%; }
 
+.sheet-fit { overflow: visible !important; margin: 0 !important; padding: 0 !important; }
+
 .invoice-sheet {
-  border: 0;
   box-shadow: none;
   padding: 0;
   border-radius: 0;
+  border: 0;
+  width: 100% !important;
+  max-width: 100% !important;
 }
+
+/* Print accent rules/borders that define each template (templates are
+   ink-light by design — only thin accent lines need to render in color). */
+.invoice-sheet,
+.invoice-sheet * {
+  -webkit-print-color-adjust: exact;
+  print-color-adjust: exact;
+}
+
+.invoice-sheet[data-template="contractor"] { border-top: 4px solid #b45309; }
+.invoice-sheet[data-template="autoshop"] {
+  border-top: 5px solid #0f172a;
+  border-bottom: 5px solid #dc2626;
+}
+.invoice-sheet[data-template="agency"] { border-left: 4px solid #0f766e; }
+.invoice-sheet[data-template="academic"] .invoice-head { border-bottom: 1px dashed #6d28d9; }
+
+/* Hide empty custom-field rows */
+.custom-field-row:has(input:placeholder-shown) { display: none !important; }
 
 .lines input {
   border: 0 !important;
@@ -27,12 +50,39 @@ main.wrap { padding: 0; max-width: 100%; }
 
 .bill-to input,
 .bill-to textarea,
+.ship-to input,
+.ship-to textarea,
 .notes textarea,
+.payment-block textarea,
+.payment-block input,
+.payment-block select,
 .meta-row input,
+.meta-row select,
 .totals-grid input {
   border: 0 !important;
   background: transparent !important;
   padding: 0 !important;
+  -webkit-appearance: none;
+  appearance: none;
 }
 
-#tax-rate { width: auto !important; }
+#tax-rate, #discount { width: auto !important; }
+
+.biz-logo.empty { display: none !important; }
+
+/* Hide line-type column on print (it's a UI control, not invoice content) */
+.col-type { display: none !important; }
+
+/* Hide reference / custom-terms rows when blank (modern browsers only) */
+#inv-reference-row:has(input:placeholder-shown),
+#inv-payment-terms-custom-row:has(input:placeholder-shown) { display: none !important; }
+
+/* Hide custom-field rows when the value is blank (label-only rows are not useful in print) */
+.custom-field-row:has([data-cf-value]:placeholder-shown) { display: none !important; }
+
+/* Make the editable label look like plain text in print */
+.cf-label-input { border: 0 !important; background: transparent !important; padding: 0 !important; }
+.cf-value-input { border: 0 !important; background: transparent !important; padding: 0 !important; }
+
+/* Hide ship-to entirely when both name and address are blank */
+.ship-to:has(#ship-name:placeholder-shown):has(#ship-address:placeholder-shown) { display: none !important; }

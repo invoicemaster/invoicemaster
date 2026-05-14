@@ -1,4 +1,4 @@
-import { getAll, put, remove } from './db.js';
+import { getAll, put, remove } from './db.js?v=1778729124836';
 
 export async function loadClients() {
   return await getAll('clients');
@@ -23,6 +23,7 @@ export function initClientsTab(onChange) {
       name: form.name.value.trim(),
       address: form.address.value.trim(),
       email: form.email.value.trim(),
+      phone: form.phone.value.trim(),
     };
     if (id) data.id = id;
     await saveClient(data);
@@ -59,12 +60,13 @@ async function render(list, form, onChange) {
       </div>
     `;
     li.querySelector('strong').textContent = c.name;
-    li.querySelector('.meta').textContent = [c.email, c.address].filter(Boolean).join(' · ');
+    li.querySelector('.meta').textContent = [c.email, c.phone, c.address].filter(Boolean).join(' · ');
     li.querySelector('[data-edit]').addEventListener('click', () => {
       form.id.value = c.id;
       form.name.value = c.name || '';
       form.address.value = c.address || '';
       form.email.value = c.email || '';
+      form.phone.value = c.phone || '';
       form.name.focus();
     });
     li.querySelector('[data-del]').addEventListener('click', async () => {

@@ -1,9 +1,24 @@
-import { get, put } from './db.js';
+import { get, put } from './db.js?v=1778729124836';
+import { DEFAULT_TEMPLATE, renderGallery, setGallerySelection } from './templates.js?v=1778729124836';
+import { renderSyncCard } from './sync-ui.js?v=1778729124836';
 
 const BIZ_ID = 'me';
 
 export async function loadBusiness() {
-  return (await get('business', BIZ_ID)) || { id: BIZ_ID, name: '', address: '', contact: '', logo: '', currency: '$', taxRate: 0 };
+  return (await get('business', BIZ_ID)) || {
+    id: BIZ_ID,
+    name: '',
+    address: '',
+    contact: '',
+    taxId: '',
+    license: '',
+    logo: '',
+    currency: '$',
+    taxRate: 0,
+    template: DEFAULT_TEMPLATE,
+    paymentTerms: 'net_30',
+    paymentInstructions: '',
+  };
 }
 
 export async function saveBusiness(data) {
@@ -13,13 +28,26 @@ export async function saveBusiness(data) {
 export function initBusinessForm() {
   const form = document.getElementById('business-form');
   const preview = document.getElementById('logo-preview');
+  const galleryEl = document.getElementById('template-gallery-default');
+  const syncMount = document.getElementById('sync-mount');
+  if (syncMount) renderSyncCard(syncMount);
 
   loadBusiness().then((biz) => {
     form.name.value = biz.name || '';
     form.address.value = biz.address || '';
     form.contact.value = biz.contact || '';
+    form.taxId.value = biz.taxId || '';
+    form.license.value = biz.license || '';
     form.currency.value = biz.currency || '$';
     form.taxRate.value = biz.taxRate || 0;
+    form.paymentTerms.value = biz.paymentTerms || 'net_30';
+    form.paymentInstructions.value = biz.paymentInstructions || '';
+    const tpl = biz.template || DEFAULT_TEMPLATE;
+    form.template.value = tpl;
+    renderGallery(galleryEl, tpl, (picked) => {
+      form.template.value = picked;
+      setGallerySelection(galleryEl, picked);
+    });
     if (biz.logo) preview.innerHTML = `<img src="${biz.logo}" alt="logo" />`;
     renderBusinessOnInvoice(biz);
   });
@@ -39,9 +67,14 @@ export function initBusinessForm() {
       name: form.name.value.trim(),
       address: form.address.value.trim(),
       contact: form.contact.value.trim(),
+      taxId: form.taxId.value.trim(),
+      license: form.license.value.trim(),
       logo: form.dataset.logo || current.logo || '',
       currency: form.currency.value.trim() || '$',
       taxRate: parseFloat(form.taxRate.value) || 0,
+      template: form.template.value || DEFAULT_TEMPLATE,
+      paymentTerms: form.paymentTerms.value || 'net_30',
+      paymentInstructions: form.paymentInstructions.value.trim(),
     };
     await saveBusiness(data);
     renderBusinessOnInvoice(data);
@@ -53,8 +86,18 @@ export function renderBusinessOnInvoice(biz) {
   document.getElementById('biz-name').textContent = biz.name || 'Your Business';
   document.getElementById('biz-address').textContent = biz.address || '';
   document.getElementById('biz-contact').textContent = biz.contact || '';
+  const taxIdEl = document.getElementById('biz-taxid');
+  if (taxIdEl) taxIdEl.textContent = biz.taxId ? `Tax ID: ${biz.taxId}` : '';
+  const licenseEl = document.getElementById('biz-license');
+  if (licenseEl) licenseEl.textContent = biz.license ? `License: ${biz.license}` : '';
   const logoEl = document.getElementById('biz-logo');
-  logoEl.innerHTML = biz.logo ? `<img src="${biz.logo}" alt="logo" />` : '';
+  if (biz.logo) {
+    logoEl.innerHTML = `<img src="${biz.logo}" alt="logo" />`;
+    logoEl.classList.remove('empty');
+  } else {
+    logoEl.innerHTML = '';
+    logoEl.classList.add('empty');
+  }
 }
 
 function fileToDataURL(file) {

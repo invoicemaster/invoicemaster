@@ -1,5 +1,5 @@
 const DB_NAME = 'invoicemaster';
-const DB_VERSION = 1;
+const DB_VERSION = 2;
 
 let dbPromise = null;
 
@@ -18,6 +18,9 @@ export function openDB() {
       if (!db.objectStoreNames.contains('invoices')) {
         const store = db.createObjectStore('invoices', { keyPath: 'id', autoIncrement: true });
         store.createIndex('updatedAt', 'updatedAt');
+      }
+      if (!db.objectStoreNames.contains('industryPrefs')) {
+        db.createObjectStore('industryPrefs', { keyPath: 'industryId' });
       }
     };
     req.onsuccess = () => resolve(req.result);
