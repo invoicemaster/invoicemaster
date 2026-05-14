@@ -63,6 +63,20 @@ export const TEMPLATES = [
     customFields: [],
   },
   {
+    id: 'modernred',
+    label: 'Modern Red',
+    referenceLabel: 'Invoice #',
+    category: 'creative',
+    customFields: [],
+  },
+  {
+    id: 'letterheadblue',
+    label: 'Letterhead Blue',
+    referenceLabel: 'Invoice #',
+    category: 'professional',
+    customFields: [],
+  },
+  {
     id: 'classic',
     label: 'Classic',
     referenceLabel: 'Reference',

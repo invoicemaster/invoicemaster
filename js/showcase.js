@@ -1,6 +1,6 @@
-import { CATEGORIES, getTemplate, PAYMENT_TERMS } from './templates.js?v=1778729412855';
-import { INDUSTRIES } from './industries.js?v=1778729412855';
-import { sheetInnerHtml } from './editor.js?v=1778729412855';
+import { CATEGORIES, getTemplate, PAYMENT_TERMS } from './templates.js?v=1778730746703';
+import { INDUSTRIES } from './industries.js?v=1778730746703';
+import { sheetInnerHtml } from './editor.js?v=1778730746703';
 
 const DEFAULTS = {
   bizAddress: '1912 Harvest Lane\nNew York, NY 12210',
@@ -243,4 +243,20 @@ export function renderShowcase(container) {
     `;
     container.appendChild(section);
   }
+  applyCardScales();
+  // Recompute on window resize so cards stay correctly scaled
+  if (!window.__showcaseResizeBound) {
+    window.addEventListener('resize', applyCardScales);
+    window.__showcaseResizeBound = true;
+  }
+}
+
+function applyCardScales() {
+  const SHEET_WIDTH = 794;
+  document.querySelectorAll('.showcase-frame').forEach((frame) => {
+    const w = frame.clientWidth;
+    if (!w) return;
+    const scale = Math.min(1, w / SHEET_WIDTH);
+    frame.style.setProperty('--card-scale', scale.toFixed(4));
+  });
 }

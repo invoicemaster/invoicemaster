@@ -1,4 +1,4 @@
-import { PAYMENT_TERMS, STATUSES } from './templates.js?v=1778729412855';
+import { PAYMENT_TERMS, STATUSES } from './templates.js?v=1778730746703';
 
 function paymentTermsOptions(selected = 'net_30') {
   return PAYMENT_TERMS.map(
@@ -200,6 +200,12 @@ export function sheetInnerHtml(opts = {}) {
       </div>
     </div>
 
+    <div class="signature-block">
+      <div class="signature${(isEditor || v.bizSignature) ? '' : ' empty'}"${id('biz-signature')}>${
+        isEditor ? '' : (v.bizSignature ? `<img src="${esc(v.bizSignature)}" alt="signature" />` : '')
+      }</div>
+    </div>
+
     <div class="payment-block">
       <div class="section-label">${editable('payment', labelText('payment', 'Payment'))}</div>
       <div class="payment-row">
@@ -275,6 +281,8 @@ export function renderBusinessForm(root) {
       <label>License / certification (electrician, EPA, SAG, contractor, etc.)<input type="text" name="license" placeholder="optional" /></label>
       <label>Logo (PNG/JPG/SVG)<input type="file" name="logo" accept="image/*" /></label>
       <div class="logo-preview" id="logo-preview"></div>
+      <label>Signature (PNG/JPG/SVG, transparent background recommended)<input type="file" name="signature" accept="image/*" /></label>
+      <div class="signature-preview" id="signature-preview"></div>
       <label>Default currency symbol<input type="text" name="currency" value="$" maxlength="3" /></label>
       <label>Default tax rate (%)<input type="number" name="taxRate" step="0.01" value="0" /></label>
       <label>Default payment terms

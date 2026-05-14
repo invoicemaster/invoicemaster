@@ -1,6 +1,6 @@
-import { get, put } from './db.js?v=1778729412855';
-import { DEFAULT_TEMPLATE, renderGallery, setGallerySelection } from './templates.js?v=1778729412855';
-import { renderSyncCard } from './sync-ui.js?v=1778729412855';
+import { get, put } from './db.js?v=1778730746703';
+import { DEFAULT_TEMPLATE, renderGallery, setGallerySelection } from './templates.js?v=1778730746703';
+import { renderSyncCard } from './sync-ui.js?v=1778730746703';
 
 const BIZ_ID = 'me';
 
@@ -13,6 +13,7 @@ export async function loadBusiness() {
     taxId: '',
     license: '',
     logo: '',
+    signature: '',
     currency: '$',
     taxRate: 0,
     template: DEFAULT_TEMPLATE,
@@ -28,6 +29,7 @@ export async function saveBusiness(data) {
 export function initBusinessForm() {
   const form = document.getElementById('business-form');
   const preview = document.getElementById('logo-preview');
+  const signaturePreview = document.getElementById('signature-preview');
   const galleryEl = document.getElementById('template-gallery-default');
   const syncMount = document.getElementById('sync-mount');
   if (syncMount) renderSyncCard(syncMount);
@@ -49,6 +51,7 @@ export function initBusinessForm() {
       setGallerySelection(galleryEl, picked);
     });
     if (biz.logo) preview.innerHTML = `<img src="${biz.logo}" alt="logo" />`;
+    if (biz.signature && signaturePreview) signaturePreview.innerHTML = `<img src="${biz.signature}" alt="signature" />`;
     renderBusinessOnInvoice(biz);
   });
 
@@ -60,6 +63,16 @@ export function initBusinessForm() {
     form.dataset.logo = dataUrl;
   });
 
+  if (form.signature) {
+    form.signature.addEventListener('change', async (e) => {
+      const file = e.target.files[0];
+      if (!file) return;
+      const dataUrl = await fileToDataURL(file);
+      if (signaturePreview) signaturePreview.innerHTML = `<img src="${dataUrl}" alt="signature" />`;
+      form.dataset.signature = dataUrl;
+    });
+  }
+
   form.addEventListener('submit', async (e) => {
     e.preventDefault();
     const current = await loadBusiness();
@@ -70,6 +83,7 @@ export function initBusinessForm() {
       taxId: form.taxId.value.trim(),
       license: form.license.value.trim(),
       logo: form.dataset.logo || current.logo || '',
+      signature: form.dataset.signature || current.signature || '',
       currency: form.currency.value.trim() || '$',
       taxRate: parseFloat(form.taxRate.value) || 0,
       template: form.template.value || DEFAULT_TEMPLATE,
@@ -97,6 +111,11 @@ export function renderBusinessOnInvoice(biz) {
   } else {
     logoEl.innerHTML = '';
     logoEl.classList.add('empty');
+  }
+  const sigEl = document.getElementById('biz-signature');
+  if (sigEl) {
+    sigEl.innerHTML = biz.signature ? `<img src="${biz.signature}" alt="signature" />` : '';
+    sigEl.classList.toggle('empty', !biz.signature);
   }
 }
 

@@ -1,6 +1,6 @@
-import { getAll, get, put, remove } from './db.js?v=1778729412855';
-import { loadBusiness, renderBusinessOnInvoice } from './business.js?v=1778729412855';
-import { loadClients } from './clients.js?v=1778729412855';
+import { getAll, get, put, remove } from './db.js?v=1778730746703';
+import { loadBusiness, renderBusinessOnInvoice } from './business.js?v=1778730746703';
+import { loadClients } from './clients.js?v=1778730746703';
 import {
   isValidTemplate,
   DEFAULT_TEMPLATE,
@@ -8,8 +8,8 @@ import {
   setGallerySelection,
   getTemplate,
   LINE_TYPES,
-} from './templates.js?v=1778729412855';
-import { getIndustry } from './industries.js?v=1778729412855';
+} from './templates.js?v=1778730746703';
+import { getIndustry } from './industries.js?v=1778730746703';
 
 let prefSaveTimer = null;
 function saveIndustryPrefSoon() {
@@ -18,8 +18,10 @@ function saveIndustryPrefSoon() {
   prefSaveTimer = setTimeout(async () => {
     const fields = readCustomFields();
     const fieldTemplate = fields.map(({ id, label, section, type }) => ({ id, label, section, type }));
+    const template = document.getElementById('invoice-sheet')?.dataset.template;
     await put('industryPrefs', {
       industryId: currentIndustry.id,
+      template, // remember the user's chosen visual template so refresh keeps it
       customFields: fieldTemplate,
       labels: collectLabels(),
     });
@@ -239,12 +241,22 @@ export async function initInvoiceTab(opts = {}) {
   renderBusinessOnInvoice(biz);
 
   currentIndustry = opts.initialIndustry ? getIndustry(opts.initialIndustry) : null;
-  const initial = (currentIndustry && currentIndustry.template) || opts.initialTemplate || biz.template || DEFAULT_TEMPLATE;
-  renderGallery(document.getElementById('template-gallery'), initial, applyTemplate);
 
   // If the user has previously customized this industry, use those overrides;
   // otherwise fall back to the industry's defaults.
   const savedPref = currentIndustry ? await loadIndustryPref(currentIndustry.id) : null;
+  // Visual template priority: user's saved choice → industry default → page meta → business default → DEFAULT
+  const initial = (savedPref && isValidTemplate(savedPref.template) ? savedPref.template : null)
+    || (currentIndustry && currentIndustry.template)
+    || opts.initialTemplate
+    || biz.template
+    || DEFAULT_TEMPLATE;
+  // Gallery click → apply visual + persist the choice so refresh remembers it
+  renderGallery(document.getElementById('template-gallery'), initial, (id) => {
+    applyTemplate(id);
+    saveIndustryPrefSoon();
+  });
+
   const presetFields = savedPref && savedPref.customFields ? savedPref.customFields.map((f) => ({ ...f, value: '' })) : null;
   applyTemplate(initial, presetFields);
   if (savedPref && savedPref.labels) applyLabels(savedPref.labels);

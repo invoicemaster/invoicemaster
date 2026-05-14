@@ -1,10 +1,10 @@
-import { initBusinessForm } from './business.js?v=1778729412855';
-import { initClientsTab } from './clients.js?v=1778729412855';
-import { initInvoiceTab, refreshClientPicker, loadInvoice } from './invoice.js?v=1778729412855';
-import { renderDashboard } from './dashboard.js?v=1778729412855';
-import { renderEditor, renderBusinessForm, renderClientsForm, renderDashboardSection } from './editor.js?v=1778729412855';
-import { isValidTemplate } from './templates.js?v=1778729412855';
-import { isValidIndustry } from './industries.js?v=1778729412855';
+import { initBusinessForm } from './business.js?v=1778730746703';
+import { initClientsTab } from './clients.js?v=1778730746703';
+import { initInvoiceTab, refreshClientPicker, loadInvoice } from './invoice.js?v=1778730746703';
+import { renderDashboard } from './dashboard.js?v=1778730746703';
+import { renderEditor, renderBusinessForm, renderClientsForm, renderDashboardSection } from './editor.js?v=1778730746703';
+import { isValidTemplate } from './templates.js?v=1778730746703';
+import { isValidIndustry } from './industries.js?v=1778730746703';
 
 function getInitialTemplate() {
   const meta = document.querySelector('meta[name="initial-template"]');

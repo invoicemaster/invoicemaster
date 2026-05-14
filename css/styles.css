@@ -30,7 +30,7 @@ html, body {
 @media (min-width: 640px) {
   .wrap { padding: 0 20px; }
 }
-.wrap-wide { max-width: 1200px; }
+.wrap-wide { max-width: 1500px; }
 
 /* Topbar */
 .topbar {
@@ -619,6 +619,22 @@ h2 { margin: 0 0 4px 0; font-size: 20px; }
 .logo-preview { max-width: 120px; max-height: 80px; }
 .logo-preview img { max-width: 100%; max-height: 100%; }
 
+/* Signature */
+.signature-preview { max-width: 200px; max-height: 80px; }
+.signature-preview img { max-width: 100%; max-height: 100%; }
+.signature-block {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 28px;
+  min-height: 60px;
+}
+.signature {
+  max-width: 220px;
+  max-height: 90px;
+}
+.signature img { max-width: 100%; max-height: 100%; }
+.signature.empty { display: none; }
+
 /* Record lists */
 .record-list {
   list-style: none;
@@ -947,7 +963,6 @@ h2 { margin: 0 0 4px 0; font-size: 20px; }
   aspect-ratio: 794 / 1100;
   overflow: hidden;
   position: relative;
-  container-type: inline-size;
 }
 .showcase-frame .invoice-sheet {
   width: 794px;
@@ -955,7 +970,7 @@ h2 { margin: 0 0 4px 0; font-size: 20px; }
   border: 0;
   border-radius: 0;
   box-shadow: none;
-  transform: scale(min(1, calc(100cqw / 794)));
+  transform: scale(var(--card-scale, 0.4));
   transform-origin: top left;
   pointer-events: none;
 }
@@ -1512,6 +1527,116 @@ h2 { margin: 0 0 4px 0; font-size: 20px; }
   color: var(--tpl-accent);
   font-style: italic;
   border-top: 1px solid var(--tpl-accent);
+}
+
+/* ===== TEMPLATE: Modern Red (bold red, circular logo, banded table header) ===== */
+.invoice-sheet[data-template="modernred"] {
+  --tpl-accent: #c0392b;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Arial, sans-serif;
+  border-top: 4px solid var(--tpl-accent);
+  border-bottom: 4px solid var(--tpl-accent);
+}
+.invoice-sheet[data-template="modernred"] .biz-name {
+  color: var(--tpl-accent);
+  font-weight: 700;
+  font-size: 22px;
+}
+.invoice-sheet[data-template="modernred"] .biz-logo {
+  border-radius: 50%;
+  background: #999;
+  width: 76px;
+  height: 76px;
+}
+.invoice-sheet[data-template="modernred"] .biz-logo.empty::after { color: #fff; }
+.invoice-sheet[data-template="modernred"] .invoice-head {
+  border-bottom: 1px solid var(--tpl-accent);
+  padding-bottom: 16px;
+}
+.invoice-sheet[data-template="modernred"] .invoice-title {
+  display: none;
+}
+.invoice-sheet[data-template="modernred"] .section-label {
+  color: var(--tpl-accent);
+  font-weight: 700;
+}
+.invoice-sheet[data-template="modernred"] .meta-row > span:first-child,
+.invoice-sheet[data-template="modernred"] .meta-row > .label-text,
+.invoice-sheet[data-template="modernred"] .meta-row > .editable-label {
+  color: var(--tpl-accent);
+  font-weight: 700;
+}
+.invoice-sheet[data-template="modernred"] .lines th {
+  background: var(--tpl-accent);
+  color: #fff;
+  padding: 10px 8px;
+  border-bottom: 0;
+  text-align: center;
+}
+.invoice-sheet[data-template="modernred"] .lines td {
+  border-bottom: 1px solid #f0d0cb;
+}
+.invoice-sheet[data-template="modernred"] .total-label,
+.invoice-sheet[data-template="modernred"] .total-value {
+  font-weight: 800;
+  font-size: 20px;
+  border-top: 1px solid var(--tpl-accent);
+}
+.invoice-sheet[data-template="modernred"] .notes .section-label,
+.invoice-sheet[data-template="modernred"] .payment-block .section-label {
+  color: var(--tpl-accent);
+  font-weight: 700;
+}
+
+/* ===== TEMPLATE: Letterhead Blue (solid blue header band, formal corporate) ===== */
+.invoice-sheet[data-template="letterheadblue"] {
+  --tpl-accent: #3b6ea5;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Arial, sans-serif;
+}
+.invoice-sheet[data-template="letterheadblue"] .invoice-head {
+  background: var(--tpl-accent);
+  color: #fff;
+  margin: -40px -40px 24px;
+  padding: 20px 40px;
+  align-items: center;
+}
+.invoice-sheet[data-template="letterheadblue"] .biz-logo {
+  background: rgba(255, 255, 255, 0.15);
+}
+.invoice-sheet[data-template="letterheadblue"] .biz-logo.empty::after { color: rgba(255, 255, 255, 0.7); }
+.invoice-sheet[data-template="letterheadblue"] .biz-name {
+  color: #fff;
+  font-weight: 700;
+  font-size: 22px;
+}
+.invoice-sheet[data-template="letterheadblue"] .biz-line { color: rgba(255, 255, 255, 0.85); }
+.invoice-sheet[data-template="letterheadblue"] .invoice-title {
+  color: #fff;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+}
+.invoice-sheet[data-template="letterheadblue"] .invoice-meta .label-text,
+.invoice-sheet[data-template="letterheadblue"] .invoice-meta .editable-label {
+  color: rgba(255, 255, 255, 0.85);
+}
+.invoice-sheet[data-template="letterheadblue"] .invoice-meta .value-text,
+.invoice-sheet[data-template="letterheadblue"] .invoice-meta input { color: #fff; }
+.invoice-sheet[data-template="letterheadblue"] .section-label {
+  color: var(--tpl-accent);
+  font-weight: 700;
+}
+.invoice-sheet[data-template="letterheadblue"] .lines th {
+  color: var(--tpl-accent);
+  border-bottom: 2px solid var(--tpl-accent);
+  font-weight: 700;
+}
+.invoice-sheet[data-template="letterheadblue"] .total-label,
+.invoice-sheet[data-template="letterheadblue"] .total-value {
+  background: #eff4f9;
+  color: var(--tpl-accent);
+  font-weight: 700;
+  padding: 10px;
+  font-size: 18px;
+  border-top: 0;
 }
 
 /* ===== TEMPLATE: Academic & Coaching (warm, schedule-friendly) ===== */
