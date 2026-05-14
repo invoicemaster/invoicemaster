@@ -2,7 +2,7 @@
    user can save, and imports it back. Because the site is local-only, this is
    the only safety net against a cleared browser. */
 
-import { getAll, put, openDB } from './db.js';
+import { getAll, put, openDB } from './db.js?v=1778796839793';
 
 const STORES = ['business', 'clients', 'invoices', 'industryPrefs'];
 const FORMAT_VERSION = 1;

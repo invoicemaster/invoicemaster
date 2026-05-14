@@ -1,8 +1,8 @@
-import { get, put } from './db.js?v=1778791897844';
-import { DEFAULT_TEMPLATE, renderGallery, setGallerySelection } from './templates.js?v=1778791897844';
-import { renderSyncCard } from './sync-ui.js?v=1778791897844';
-import { exportAll, downloadBackup, importAll, readJsonFile } from './backup.js?v=1778791897844';
-import { normalizeCurrency } from './currency.js?v=1778791897844';
+import { get, put } from './db.js?v=1778796839793';
+import { DEFAULT_TEMPLATE, renderGallery, setGallerySelection } from './templates.js?v=1778796839793';
+import { renderSyncCard } from './sync-ui.js?v=1778796839793';
+import { exportAll, downloadBackup, importAll, readJsonFile } from './backup.js?v=1778796839793';
+import { normalizeCurrency } from './currency.js?v=1778796839793';
 
 const BIZ_ID = 'me';
 
@@ -16,7 +16,7 @@ export async function loadBusiness() {
     license: '',
     logo: '',
     signature: '',
-    currency: '$',
+    currency: 'USD',
     taxRate: 0,
     template: DEFAULT_TEMPLATE,
     paymentTerms: 'net_30',

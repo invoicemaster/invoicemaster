@@ -1,6 +1,6 @@
-import { getAll, get, put, remove } from './db.js?v=1778791897844';
-import { loadBusiness, renderBusinessOnInvoice } from './business.js?v=1778791897844';
-import { loadClients } from './clients.js?v=1778791897844';
+import { getAll, get, put, remove } from './db.js?v=1778796839793';
+import { loadBusiness, renderBusinessOnInvoice } from './business.js?v=1778796839793';
+import { loadClients } from './clients.js?v=1778796839793';
 import {
   isValidTemplate,
   DEFAULT_TEMPLATE,
@@ -8,8 +8,9 @@ import {
   setGallerySelection,
   getTemplate,
   LINE_TYPES,
-} from './templates.js?v=1778791897844';
-import { getIndustry } from './industries.js?v=1778791897844';
+} from './templates.js?v=1778796839793';
+import { getIndustry } from './industries.js?v=1778796839793';
+import { formatMoney, normalizeCurrency } from './currency.js?v=1778796839793';
 
 /* === Draft autosave =========================================================
    While a user is creating a new invoice (no currentId), every form change
@@ -89,7 +90,7 @@ async function clearIndustryPref(industryId) {
 }
 
 let currentId = null;
-let currency = '$';
+let currency = 'USD';
 let currentIndustry = null;
 let currentPaidAt = '';
 
@@ -297,7 +298,7 @@ function onPaymentTermsChange() {
 
 export async function initInvoiceTab(opts = {}) {
   const biz = await loadBusiness();
-  currency = biz.currency || '$';
+  currency = normalizeCurrency(biz.currency);
   renderBusinessOnInvoice(biz);
 
   currentIndustry = opts.initialIndustry ? getIndustry(opts.initialIndustry) : null;
@@ -373,7 +374,7 @@ export async function initInvoiceTab(opts = {}) {
     btn.textContent = 'Building PDF…';
     btn.disabled = true;
     try {
-      const { downloadInvoicePDF } = await import('./pdf.js');
+      const { downloadInvoicePDF } = await import('./pdf.js?v=1778796839793');
       const number = (document.getElementById('inv-number').value || 'invoice').trim();
       await downloadInvoicePDF({ filename: `${number}.pdf` });
       btn.textContent = 'Downloaded';
@@ -535,7 +536,7 @@ function recalc() {
   document.getElementById('sum-subtotal').textContent = fmt(subtotal);
   document.getElementById('sum-discount').textContent = `-${fmt(discount)}`;
   document.getElementById('sum-tax').textContent = fmt(tax);
-  document.getElementById('sum-total').textContent = `${currency}${fmt(total)}`;
+  document.getElementById('sum-total').textContent = formatMoney(total, currency);
 }
 
 function fmt(n) {
@@ -707,7 +708,7 @@ async function emailCurrentInvoice() {
   const sub = (inv.lines || []).reduce((s, l) => s + (l.qty || 0) * (l.price || 0), 0);
   const taxed = Math.max(0, sub - (inv.discount || 0));
   const total = taxed + taxed * ((inv.taxRate || 0) / 100);
-  const cur = biz.currency || '$';
+  const cur = normalizeCurrency(biz.currency);
 
   // Best-effort email lookup: match client by name in the clients store
   let toEmail = '';
@@ -725,7 +726,7 @@ async function emailCurrentInvoice() {
     '',
     `Please find invoice ${number} attached.`,
     '',
-    `Amount due: ${cur}${total.toFixed(2)}`,
+    `Amount due: ${formatMoney(total, cur)}`,
     inv.due ? `Due: ${inv.due}` : '',
     '',
     inv.paymentInstructions ? `Payment: ${inv.paymentInstructions}` : '',

@@ -1,8 +1,8 @@
-import { getAll, put } from './db.js?v=1778791897844';
-import { loadInvoice, deleteInvoice } from './invoice.js?v=1778791897844';
-import { loadBusiness } from './business.js?v=1778791897844';
-import { STATUSES } from './templates.js?v=1778791897844';
-import { formatMoney } from './currency.js?v=1778791897844';
+import { getAll, put } from './db.js?v=1778796839793';
+import { loadInvoice, deleteInvoice } from './invoice.js?v=1778796839793';
+import { loadBusiness } from './business.js?v=1778796839793';
+import { STATUSES } from './templates.js?v=1778796839793';
+import { formatMoney } from './currency.js?v=1778796839793';
 
 let state = {
   filter: 'all',
@@ -15,7 +15,7 @@ let switchToInvoice = null;
 export async function renderDashboard(switchToInvoiceFn) {
   if (switchToInvoiceFn) switchToInvoice = switchToInvoiceFn;
   const biz = await loadBusiness();
-  const currency = biz.currency || '$';
+  const currency = biz.currency || 'USD';
   const all = await getAll('invoices');
 
   const stats = computeStats(all);
@@ -78,11 +78,11 @@ function renderStats(stats, currency) {
   el.innerHTML = `
     <div class="stat-card stat-outstanding">
       <div class="stat-label">Outstanding</div>
-      <div class="stat-value">${currency}${fmt(stats.outstanding)}</div>
+      <div class="stat-value">${formatMoney(stats.outstanding, currency)}</div>
     </div>
     <div class="stat-card stat-paid">
       <div class="stat-label">Paid</div>
-      <div class="stat-value">${currency}${fmt(stats.paid)}</div>
+      <div class="stat-value">${formatMoney(stats.paid, currency)}</div>
     </div>
     <div class="stat-card stat-overdue">
       <div class="stat-label">Overdue</div>
@@ -252,7 +252,7 @@ function renderList(allInvoices, currency) {
     li.querySelector('.row-number').textContent = inv.number || '(no number)';
     li.querySelector('.status-badge').textContent = statusLabel(eff);
     li.querySelector('.row-client').textContent = inv.clientName || '—';
-    li.querySelector('.row-amount').textContent = `${currency}${fmt(total)}`;
+    li.querySelector('.row-amount').textContent = formatMoney(total, currency);
     li.querySelector('.row-due').textContent = dueLabel(inv, eff);
 
     li.addEventListener('click', async (e) => {
