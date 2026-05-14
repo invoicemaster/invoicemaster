@@ -1,6 +1,6 @@
-import { get, put } from './db.js?v=1778731280417';
-import { DEFAULT_TEMPLATE, renderGallery, setGallerySelection } from './templates.js?v=1778731280417';
-import { renderSyncCard } from './sync-ui.js?v=1778731280417';
+import { get, put } from './db.js?v=1778732496823';
+import { DEFAULT_TEMPLATE, renderGallery, setGallerySelection } from './templates.js?v=1778732496823';
+import { renderSyncCard } from './sync-ui.js?v=1778732496823';
 
 const BIZ_ID = 'me';
 

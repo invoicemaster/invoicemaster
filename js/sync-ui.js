@@ -1,4 +1,4 @@
-import { SyncSession, exportSnapshot, importSnapshot } from './sync.js?v=1778731280417';
+import { SyncSession, exportSnapshot, importSnapshot } from './sync.js?v=1778732496823';
 
 export function renderSyncCard(root) {
   root.innerHTML = `

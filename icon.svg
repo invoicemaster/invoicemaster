@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" aria-label="InvoiceMaster">
+  <rect width="512" height="512" rx="96" fill="#111827"/>
+  <!-- Document with folded corner -->
+  <path d="M132 96 H316 L380 160 V416 H132 Z" fill="#ffffff"/>
+  <path d="M316 96 V160 H380 Z" fill="#e5e7eb"/>
+  <!-- Invoice rows -->
+  <rect x="172" y="208" width="168" height="14" rx="3" fill="#111827"/>
+  <rect x="172" y="248" width="124" height="14" rx="3" fill="#111827"/>
+  <rect x="172" y="288" width="168" height="14" rx="3" fill="#111827"/>
+  <rect x="172" y="328" width="92" height="14" rx="3" fill="#111827"/>
+  <!-- Total bar -->
+  <rect x="172" y="364" width="168" height="20" rx="3" fill="#111827"/>
+</svg>

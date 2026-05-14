@@ -32,10 +32,9 @@ html, body {
 }
 .wrap-wide { max-width: 1500px; }
 
-/* Topbar */
+/* Topbar — seamless with body, no divider */
 .topbar {
-  background: var(--surface);
-  border-bottom: 1px solid var(--line);
+  background: var(--bg);
   position: sticky;
   top: 0;
   z-index: 10;
@@ -127,26 +126,61 @@ h2 { margin: 0 0 4px 0; font-size: 20px; }
 /* Buttons */
 .btn, .btn-primary, .btn-ghost {
   font: inherit;
-  padding: 8px 14px;
-  border-radius: 6px;
+  font-weight: 600;
+  padding: 10px 18px;
+  border-radius: 8px;
   cursor: pointer;
   border: 1px solid var(--line);
   background: var(--surface);
   color: var(--ink);
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+  transition: background 0.12s ease, border-color 0.12s ease, transform 0.08s ease, box-shadow 0.12s ease, color 0.12s ease;
+  line-height: 1.2;
 }
-.btn:hover { background: var(--soft); }
+.btn:hover {
+  background: var(--soft);
+  border-color: var(--ink);
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
+}
+.btn:active {
+  transform: translateY(1px);
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+}
 .btn-primary {
   background: var(--ink);
   border-color: var(--ink);
   color: var(--accent-ink);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.12);
 }
-.btn-primary:hover { opacity: 0.9; }
+.btn-primary:hover {
+  background: #000;
+  border-color: #000;
+  box-shadow: 0 6px 14px rgba(0, 0, 0, 0.22);
+  transform: translateY(-1px);
+}
+.btn-primary:active {
+  transform: translateY(0);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.12);
+}
 .btn-ghost {
   background: transparent;
   border-color: transparent;
   color: var(--muted);
+  box-shadow: none;
+  font-weight: 500;
 }
-.btn-ghost:hover { background: var(--soft); color: var(--ink); }
+.btn-ghost:hover {
+  background: var(--soft);
+  color: var(--ink);
+  border-color: transparent;
+  box-shadow: none;
+}
+.btn:focus-visible,
+.btn-primary:focus-visible,
+.btn-ghost:focus-visible {
+  outline: 2px solid var(--ink);
+  outline-offset: 2px;
+}
 
 /* Sheet is always A4-shaped — fixed width so the internal layout never reflows.
    On narrow viewports, .sheet-fit lets the sheet scroll horizontally. */
@@ -790,7 +824,7 @@ h2 { margin: 0 0 4px 0; font-size: 20px; }
 /* ===== Home page & template-page chrome ===== */
 .home-nav {
   display: flex;
-  gap: 18px;
+  gap: 4px;
   font-size: 14px;
   overflow-x: auto;
   -webkit-overflow-scrolling: touch;
@@ -799,48 +833,76 @@ h2 { margin: 0 0 4px 0; font-size: 20px; }
   color: var(--muted);
   text-decoration: none;
   white-space: nowrap;
-  padding: 6px 2px;
-  border-bottom: 2px solid transparent;
+  padding: 8px 14px;
+  border-radius: 8px;
+  font-weight: 500;
+  transition: background 0.12s ease, color 0.12s ease;
 }
-.home-nav a:hover { color: var(--ink); }
-.home-nav a.active {
+.home-nav a:hover {
   color: var(--ink);
-  border-bottom-color: var(--ink);
+  background: var(--soft);
+}
+.home-nav a.active {
+  color: var(--accent-ink);
+  background: var(--ink);
   font-weight: 600;
 }
 
 .hero {
-  padding: 36px 0 28px;
+  position: relative;
+  padding: 48px 0 36px;
   text-align: center;
+  background:
+    radial-gradient(800px 400px at 50% -100px, rgba(17, 24, 39, 0.06), transparent 70%),
+    linear-gradient(180deg, var(--surface), transparent 60%);
+  overflow: hidden;
 }
 @media (min-width: 720px) {
-  .hero { padding: 64px 0 48px; }
+  .hero { padding: 96px 0 72px; }
 }
 .hero h1 {
-  margin: 0 0 12px;
-  font-size: 32px;
-  letter-spacing: -0.02em;
-  line-height: 1.1;
+  margin: 0 0 14px;
+  font-size: 36px;
+  letter-spacing: -0.025em;
+  line-height: 1.05;
+  font-weight: 700;
 }
 @media (min-width: 720px) {
-  .hero h1 { font-size: 48px; }
+  .hero h1 { font-size: 56px; }
 }
 .hero-sub {
-  margin: 0 auto 20px;
+  margin: 0 auto 28px;
   color: var(--muted);
-  font-size: 16px;
-  max-width: 560px;
+  font-size: 17px;
+  line-height: 1.55;
+  max-width: 620px;
 }
 .hero-cta {
   display: flex;
-  gap: 10px;
+  gap: 12px;
   justify-content: center;
   flex-wrap: wrap;
 }
-.hero-cta a { text-decoration: none; padding: 12px 18px; font-size: 15px; }
+.hero-cta a {
+  text-decoration: none;
+  padding: 12px 22px;
+  font-size: 15px;
+  font-weight: 500;
+}
+.hero-meta {
+  margin-top: 22px;
+  font-size: 13px;
+  color: var(--muted);
+  display: flex;
+  gap: 14px;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+.hero-meta span { display: inline-flex; align-items: center; gap: 6px; }
+.hero-meta .dot { color: var(--line); }
 
 .section { padding: 28px 0; }
-.section-alt { background: var(--surface); border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); }
+.section-alt { background: var(--surface); }
 .section h2 { margin: 0 0 4px; font-size: 22px; }
 
 .feature-grid {
@@ -1059,25 +1121,89 @@ h2 { margin: 0 0 4px 0; font-size: 20px; }
 .cross-links h2 { margin: 0 0 12px; font-size: 16px; color: var(--muted); }
 
 .site-footer {
-  padding: 24px 0 32px;
+  padding: 36px 0 24px;
   border-top: 1px solid var(--line);
-  margin-top: 16px;
+  margin-top: 48px;
   color: var(--muted);
   font-size: 13px;
+  background: var(--surface);
 }
 .site-footer .wrap {
+  display: grid;
+  gap: 28px;
+  align-items: center;
+}
+/* Editor pages have a simple two-item footer — use flex instead of grid */
+.site-footer.no-print .wrap {
   display: flex;
-  gap: 12px;
   justify-content: space-between;
   flex-wrap: wrap;
+  gap: 16px;
 }
-.site-footer a { color: var(--muted); }
-.site-footer a:hover { color: var(--ink); }
+@media (min-width: 720px) {
+  .site-footer .wrap { grid-template-columns: 2fr 1fr 1fr 1fr; }
+}
+.footer-brand { display: grid; gap: 6px; }
+.footer-brand-name {
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--ink);
+  letter-spacing: -0.01em;
+}
+.footer-by {
+  font-weight: 400;
+  color: var(--muted);
+  font-size: 13px;
+  letter-spacing: 0;
+  margin-left: 4px;
+}
+.footer-tag { line-height: 1.5; max-width: 320px; }
+.footer-links {
+  display: flex;
+  gap: 16px;
+  align-items: center;
+  flex-wrap: wrap;
+}
+.footer-links a {
+  color: var(--muted);
+  text-decoration: none;
+  font-size: 13px;
+}
+.footer-links a:hover { color: var(--ink); }
+.email-link { cursor: pointer; }
+.footer-col h4 {
+  margin: 0 0 10px;
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--ink);
+  font-weight: 600;
+}
+.footer-col ul { list-style: none; padding: 0; margin: 0; display: grid; gap: 6px; }
+.footer-col a {
+  color: var(--muted);
+  text-decoration: none;
+  font-size: 13px;
+  display: inline-block;
+  padding: 2px 0;
+}
+.footer-col a:hover { color: var(--ink); }
+.footer-bottom {
+  grid-column: 1 / -1;
+  margin-top: 12px;
+  padding-top: 16px;
+  border-top: 1px solid var(--line);
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  flex-wrap: wrap;
+  font-size: 12px;
+}
 .version-stamp {
   font-family: "SF Mono", Menlo, Consolas, monospace;
   font-size: 11px;
   color: var(--muted);
-  opacity: 0.6;
+  opacity: 0.5;
 }
 
 /* === Sync (device-to-device WebRTC) === */

@@ -1,0 +1,21 @@
+{
+  "name": "InvoiceMaster — Free Invoice Generator",
+  "short_name": "InvoiceMaster",
+  "description": "Free in-browser invoice generator. 12 templates, 29 industries. No signup. Data stays on your device.",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "background_color": "#f6f7f9",
+  "theme_color": "#111827",
+  "orientation": "any",
+  "categories": ["business", "productivity", "finance"],
+  "icons": [
+    { "src": "/icon.svg", "type": "image/svg+xml", "sizes": "any", "purpose": "any" },
+    { "src": "/icon.svg", "type": "image/svg+xml", "sizes": "any", "purpose": "maskable" }
+  ],
+  "shortcuts": [
+    { "name": "Start an invoice", "url": "/templates/freelancer.html" },
+    { "name": "Dashboard", "url": "/templates/freelancer.html#dashboard" },
+    { "name": "Clients", "url": "/templates/freelancer.html#clients" }
+  ]
+}
