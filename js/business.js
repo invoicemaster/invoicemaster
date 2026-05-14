@@ -19,6 +19,9 @@ export async function loadBusiness() {
     template: DEFAULT_TEMPLATE,
     paymentTerms: 'net_30',
     paymentInstructions: '',
+    numberPrefix: 'INV-',
+    numberIncludeYear: false,
+    numberPadding: 4,
   };
 }
 
