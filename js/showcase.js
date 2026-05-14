@@ -214,7 +214,6 @@ function cardHtml(industry) {
     <a class="showcase-card industry-card" href="/industries/${industry.id}.html"
        style="--card-accent: ${accent};"
        aria-label="Use the ${industry.label} invoice template">
-      <div style="background:#dc2626;color:#fff;padding:10px;text-align:center;font-weight:800;font-size:14px;letter-spacing:0.04em;">🧪 CACHE TEST 1</div>
       <div class="card-accent-band"></div>
       <div class="showcase-frame">${sheetHtml(industry)}</div>
       <div class="showcase-meta">
