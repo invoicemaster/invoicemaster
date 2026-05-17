@@ -84,3 +84,4 @@ After regenerating pages, **always run `node bust-cache.mjs`**.
 - Keyboard handling on contenteditable labels: Enter blurs (commits change), paste is sanitized to single-line plain text.
 - IndexedDB schema changes require bumping `DB_VERSION` in [js/db.js](js/db.js).
 - All custom field rows hide on print when their value is blank (`.custom-field-row:has([data-cf-value]:placeholder-shown)`).
+- **Never expose our email address in plain text.** It must never appear literally in HTML, JSON-LD, sitemaps, meta tags, or committed source — bots scrape it. Always use the bot-safe pattern: `<a class="email-link" data-u="artivicolab" data-d="gmail.com" href="#contact">`, assembled into a `mailto:` at runtime by [js/contact.js](js/contact.js). Any new contact link, page, or generator must follow this; don't hardcode the address even in comments or fallbacks.
