@@ -1,8 +1,8 @@
-import { get, put } from './db.js?v=1778985349915';
-import { DEFAULT_TEMPLATE, renderGallery, setGallerySelection } from './templates.js?v=1778985349915';
-import { renderSyncCard } from './sync-ui.js?v=1778985349915';
-import { exportAll, downloadBackup, importAll, readJsonFile } from './backup.js?v=1778985349915';
-import { normalizeCurrency } from './currency.js?v=1778985349915';
+import { get, put } from './db.js?v=1779039163817';
+import { DEFAULT_TEMPLATE, renderGallery, setGallerySelection } from './templates.js?v=1779039163817';
+import { renderSyncCard } from './sync-ui.js?v=1779039163817';
+import { exportAll, downloadBackup, importAll, readJsonFile } from './backup.js?v=1779039163817';
+import { normalizeCurrency } from './currency.js?v=1779039163817';
 
 const BIZ_ID = 'me';
 
