@@ -1,5 +1,5 @@
-import { PAYMENT_TERMS, STATUSES } from './templates.js?v=1778796839793';
-import { CURRENCIES } from './currency.js?v=1778796839793';
+import { PAYMENT_TERMS, STATUSES } from './templates.js?v=1778985349915';
+import { CURRENCIES } from './currency.js?v=1778985349915';
 
 function paymentTermsOptions(selected = 'net_30') {
   return PAYMENT_TERMS.map(

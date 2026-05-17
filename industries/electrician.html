@@ -1,12 +1,44 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <!-- Google tag (gtag.js) -->
+  <!-- Google tag (gtag.js) with Consent Mode v2 -->
   <script async src="https://www.googletagmanager.com/gtag/js?id=G-68T5SMF04R"></script>
   <script>
     window.dataLayer = window.dataLayer || [];
     function gtag(){dataLayer.push(arguments);}
     gtag('js', new Date());
+    // Consent Mode v2 — analytics denied until the visitor opts in
+    gtag('consent', 'default', {
+      ad_storage: 'denied',
+      ad_user_data: 'denied',
+      ad_personalization: 'denied',
+      analytics_storage: 'denied',
+      wait_for_update: 500
+    });
+    (function(){
+      var KEY='im-consent', choice=null;
+      try{choice=localStorage.getItem(KEY);}catch(e){}
+      if(choice==='granted'){gtag('consent','update',{analytics_storage:'granted'});}
+      window.__imSetConsent=function(v){
+        try{localStorage.setItem(KEY,v);}catch(e){}
+        if(v==='granted'){gtag('consent','update',{analytics_storage:'granted'});}
+        var b=document.getElementById('consent-banner');if(b)b.remove();
+      };
+      function showBanner(){
+        if(choice==='granted'||choice==='denied')return;
+        if(document.getElementById('consent-banner'))return;
+        var d=document.createElement('div');
+        d.id='consent-banner';d.className='consent-banner no-print';
+        d.setAttribute('role','dialog');d.setAttribute('aria-label','Cookie consent');
+        d.innerHTML='<p>We use Google Analytics to see which pages help people most. It sets one cookie. Your invoice data is never collected or sent anywhere. <a href="/privacy.html">Privacy policy</a>.</p>'+
+          '<div class="consent-actions"><button type="button" class="consent-reject">Reject</button><button type="button" class="consent-accept">Accept</button></div>';
+        d.querySelector('.consent-accept').addEventListener('click',function(){window.__imSetConsent('granted');});
+        d.querySelector('.consent-reject').addEventListener('click',function(){window.__imSetConsent('denied');});
+        document.body.appendChild(d);
+      }
+      window.__imOpenConsent=function(){choice=null;try{localStorage.removeItem(KEY);}catch(e){}showBanner();};
+      if(document.readyState==='loading'){document.addEventListener('DOMContentLoaded',showBanner);}else{showBanner();}
+    })();
     gtag('config', 'G-68T5SMF04R');
   </script>
   <meta charset="UTF-8" />
@@ -34,8 +66,8 @@
   <meta name="twitter:title" content="Residential Electrician Invoice Template — Private & Free" />
   <meta name="twitter:description" content="Private & free residential electrician invoice template. Service calls, parts, and labor for residential electrical work. No signup. Print or save as PDF in your browser." />
 
-  <link rel="stylesheet" href="../css/styles.css?v=1778796839793" />
-  <link rel="stylesheet" href="../css/print.css?v=1778796839793" media="print" />
+  <link rel="stylesheet" href="../css/styles.css?v=1778985349915" />
+  <link rel="stylesheet" href="../css/print.css?v=1778985349915" media="print" />
 
   <script type="application/ld+json">
   {
@@ -145,11 +177,11 @@
       </div>
       <div class="footer-bottom">
         <span>© Artivicolab · InvoiceMaster is a private &amp; free invoice generator</span>
-        <span class="version-stamp" title="cache-bust version">v 1778796839793</span>
+        <span class="version-stamp" title="cache-bust version">v 1778985349915</span>
       </div>
     </div>
   </footer>
 
-  <script type="module" src="../js/main.js?v=1778796839793"></script>
+  <script type="module" src="../js/main.js?v=1778985349915"></script>
 </body>
 </html>

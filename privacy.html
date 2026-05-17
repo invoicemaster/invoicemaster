@@ -1,12 +1,44 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <!-- Google tag (gtag.js) -->
+  <!-- Google tag (gtag.js) with Consent Mode v2 -->
   <script async src="https://www.googletagmanager.com/gtag/js?id=G-68T5SMF04R"></script>
   <script>
     window.dataLayer = window.dataLayer || [];
     function gtag(){dataLayer.push(arguments);}
     gtag('js', new Date());
+    // Consent Mode v2 — analytics denied until the visitor opts in
+    gtag('consent', 'default', {
+      ad_storage: 'denied',
+      ad_user_data: 'denied',
+      ad_personalization: 'denied',
+      analytics_storage: 'denied',
+      wait_for_update: 500
+    });
+    (function(){
+      var KEY='im-consent', choice=null;
+      try{choice=localStorage.getItem(KEY);}catch(e){}
+      if(choice==='granted'){gtag('consent','update',{analytics_storage:'granted'});}
+      window.__imSetConsent=function(v){
+        try{localStorage.setItem(KEY,v);}catch(e){}
+        if(v==='granted'){gtag('consent','update',{analytics_storage:'granted'});}
+        var b=document.getElementById('consent-banner');if(b)b.remove();
+      };
+      function showBanner(){
+        if(choice==='granted'||choice==='denied')return;
+        if(document.getElementById('consent-banner'))return;
+        var d=document.createElement('div');
+        d.id='consent-banner';d.className='consent-banner no-print';
+        d.setAttribute('role','dialog');d.setAttribute('aria-label','Cookie consent');
+        d.innerHTML='<p>We use Google Analytics to see which pages help people most. It sets one cookie. Your invoice data is never collected or sent anywhere. <a href="/privacy.html">Privacy policy</a>.</p>'+
+          '<div class="consent-actions"><button type="button" class="consent-reject">Reject</button><button type="button" class="consent-accept">Accept</button></div>';
+        d.querySelector('.consent-accept').addEventListener('click',function(){window.__imSetConsent('granted');});
+        d.querySelector('.consent-reject').addEventListener('click',function(){window.__imSetConsent('denied');});
+        document.body.appendChild(d);
+      }
+      window.__imOpenConsent=function(){choice=null;try{localStorage.removeItem(KEY);}catch(e){}showBanner();};
+      if(document.readyState==='loading'){document.addEventListener('DOMContentLoaded',showBanner);}else{showBanner();}
+    })();
     gtag('config', 'G-68T5SMF04R');
   </script>
   <meta charset="UTF-8" />
@@ -29,8 +61,8 @@
   <meta name="twitter:image" content="https://invoicemaster.artivicolab.com/og/home.png" />
   <meta property="og:site_name" content="InvoiceMaster" />
 
-  <link rel="stylesheet" href="css/styles.css?v=1778796839793" />
-  <link rel="stylesheet" href="css/print.css?v=1778796839793" media="print" />
+  <link rel="stylesheet" href="css/styles.css?v=1778985349915" />
+  <link rel="stylesheet" href="css/print.css?v=1778985349915" media="print" />
   <meta name="theme-color" content="#111827" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-title" content="InvoiceMaster" />
@@ -59,9 +91,9 @@
 
   <main class="wrap legal-page">
     <h1>Privacy Policy</h1>
-    <p class="legal-meta">Last updated: May 14, 2026</p>
+    <p class="legal-meta">Last updated: May 16, 2026</p>
 
-    <p class="legal-lede">InvoiceMaster is built around a simple promise: your invoice data stays on your device. This page explains exactly what that means and the few small exceptions.</p>
+    <p class="legal-lede">InvoiceMaster is built around a simple promise: your invoice data stays on your device. Analytics is opt-in and off until you accept. This page explains exactly what that means and the few small exceptions.</p>
 
     <h2>What we don't collect</h2>
     <p>We do not collect, store, or transmit any of your invoice data. That includes:</p>
@@ -73,20 +105,22 @@
     </ul>
     <p>All of the above lives only in your browser's local storage (IndexedDB and localStorage). It never reaches our servers because we do not run any servers for this product. InvoiceMaster is a static website — there is no backend that could receive your data even if we wanted it to.</p>
 
-    <h2>What we do collect</h2>
-    <p>We use <strong>Google Analytics 4</strong> to understand which pages get traffic, where visitors come from, and which industries and templates people care about. This helps us decide what to build next. The data Google Analytics collects is anonymous and aggregate. Specifically:</p>
+    <h2>Analytics &amp; your consent</h2>
+    <p>We use <strong>Google Analytics 4</strong> to understand which pages get traffic, where visitors come from, and which industries and templates people care about. This helps us decide what to build next.</p>
+    <p>We want to be precise rather than reassuring: Google Analytics processes your IP address and a randomly generated client identifier. Under the GDPR and UK GDPR these count as <strong>personal data</strong>, even though we never see your name and the data is only ever used in aggregate. We do not consider this "anonymous," and we won't claim it is.</p>
+    <p>Because of that, analytics is <strong>off by default</strong>. We implement <a href="https://support.google.com/analytics/answer/9976101" rel="noopener">Google Consent Mode v2</a> with <code>analytics_storage</code> set to <code>denied</code> until you choose. When you first visit, a banner asks whether you accept analytics:</p>
     <ul>
-      <li>Page views (which URLs were visited)</li>
-      <li>Referrer (the website you came from, if any)</li>
-      <li>Approximate location (country and city, derived from IP — your full IP is not stored)</li>
-      <li>Device type, browser, and operating system</li>
-      <li>Anonymous engagement signals (time on page, scroll depth, outbound link clicks)</li>
+      <li><strong>If you Reject</strong> (or simply ignore the banner): no analytics cookie is set and no measurement data is collected. Google Analytics does not run.</li>
+      <li><strong>If you Accept</strong>: Google Analytics is enabled and may collect page views, referrer, approximate location (country/city from IP), device/browser/OS, and engagement signals (time on page, scroll depth, outbound clicks).</li>
     </ul>
-    <p>None of this is tied to anything you type into an invoice. Google Analytics does not see your invoice content.</p>
+    <p>Either way, none of this is ever tied to anything you type into an invoice. Google Analytics never sees your invoice, business, or client content — that data never leaves your browser.</p>
 
     <h2>Cookies</h2>
-    <p>Google Analytics sets one cookie (<code>_ga</code>) to distinguish unique visitors. It contains a randomly generated identifier — not your name, email, or any data you've entered. If you'd rather opt out, install the <a href="https://tools.google.com/dlpage/gaoptout" rel="noopener">official Google Analytics opt-out browser add-on</a>, or block third-party cookies for our domain.</p>
-    <p>We do not use any other tracking cookies, advertising pixels, social-media beacons, or third-party scripts beyond Google Analytics itself.</p>
+    <p>If — and only if — you accept analytics, Google Analytics sets cookies (e.g. <code>_ga</code>) containing a random identifier to distinguish unique visitors. It does not contain your name, email, or anything you've entered. If you reject, no such cookie is set.</p>
+    <p>We do not use any advertising pixels, social-media beacons, or third-party scripts beyond Google Analytics. We store one small item in your browser's local storage (<code>im-consent</code>) to remember your cookie choice — this is strictly necessary and is not used for tracking.</p>
+    <p>You can change or withdraw your choice at any time:</p>
+    <p><button type="button" class="btn" onclick="window.__imOpenConsent && window.__imOpenConsent()">Cookie settings</button></p>
+    <p>You may also install the <a href="https://tools.google.com/dlpage/gaoptout" rel="noopener">official Google Analytics opt-out add-on</a> as an extra layer.</p>
 
     <h2>Where your data lives</h2>
     <p>When you fill in an invoice, business profile, or client record, that data is written to your browser's local IndexedDB store. It stays on your device. If you:</p>
@@ -100,11 +134,11 @@
     <p>The only third party that receives any data from InvoiceMaster is Google (for Google Analytics). We do not share, sell, rent, or trade any information to anyone else. There are no ad networks, no marketing pixels, no data brokers.</p>
 
     <h2>Children</h2>
-    <p>InvoiceMaster is not directed at children under 13. Because we do not collect personal data, there is no specific information about children to disclose.</p>
+    <p>InvoiceMaster is not directed at children under 13. We do not knowingly enable analytics for, or collect data from, children.</p>
 
     <h2>Your rights</h2>
-    <p>Because we do not store any of your business or client data on our servers, there is nothing for us to delete on your request. To delete the data on your device, clear the site's data from your browser settings, or use the Export feature to back it up first.</p>
-    <p>For the anonymous Google Analytics data, you can opt out using the add-on above. Under GDPR and CCPA, you have the right to request a copy of any personal data held about you — please email us if you have such a request.</p>
+    <p>Your invoice, business, and client data never leaves your device, so there is nothing on our servers for us to delete, export, or correct. To remove that data, clear the site's data in your browser settings (use the Export feature first if you want a backup).</p>
+    <p>For the Google Analytics data (only collected if you accept): you can withdraw consent at any time via <button type="button" class="link-btn" onclick="window.__imOpenConsent && window.__imOpenConsent()">Cookie settings</button>, which stops further collection. Under the GDPR, UK GDPR, and CCPA you also have the right to access, rectify, or erase personal data and to lodge a complaint with your supervisory authority. Because the analytics identifier is not linked to your identity we generally cannot single out your records, but email us and we will help as far as technically possible. Google's own handling is described in <a href="https://policies.google.com/privacy" rel="noopener">Google's Privacy Policy</a>.</p>
 
     <h2>Changes to this policy</h2>
     <p>If we change this policy, we'll bump the "Last updated" date at the top. Material changes will be flagged in the site footer for at least 30 days.</p>
@@ -150,7 +184,7 @@
       </div>
       <div class="footer-bottom">
         <span>© Artivicolab · InvoiceMaster is a private &amp; free invoice generator</span>
-        <span class="version-stamp" title="cache-bust version">v 1778796839793</span>
+        <span class="version-stamp" title="cache-bust version">v 1778985349915</span>
       </div>
     </div>
   </footer>

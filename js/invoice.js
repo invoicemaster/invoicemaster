@@ -1,6 +1,6 @@
-import { getAll, get, put, remove } from './db.js?v=1778796839793';
-import { loadBusiness, renderBusinessOnInvoice } from './business.js?v=1778796839793';
-import { loadClients } from './clients.js?v=1778796839793';
+import { getAll, get, put, remove } from './db.js?v=1778985349915';
+import { loadBusiness, renderBusinessOnInvoice } from './business.js?v=1778985349915';
+import { loadClients } from './clients.js?v=1778985349915';
 import {
   isValidTemplate,
   DEFAULT_TEMPLATE,
@@ -8,9 +8,9 @@ import {
   setGallerySelection,
   getTemplate,
   LINE_TYPES,
-} from './templates.js?v=1778796839793';
-import { getIndustry } from './industries.js?v=1778796839793';
-import { formatMoney, normalizeCurrency } from './currency.js?v=1778796839793';
+} from './templates.js?v=1778985349915';
+import { getIndustry } from './industries.js?v=1778985349915';
+import { formatMoney, normalizeCurrency } from './currency.js?v=1778985349915';
 
 /* === Draft autosave =========================================================
    While a user is creating a new invoice (no currentId), every form change
@@ -374,7 +374,7 @@ export async function initInvoiceTab(opts = {}) {
     btn.textContent = 'Building PDF…';
     btn.disabled = true;
     try {
-      const { downloadInvoicePDF } = await import('./pdf.js?v=1778796839793');
+      const { downloadInvoicePDF } = await import('./pdf.js?v=1778985349915');
       const number = (document.getElementById('inv-number').value || 'invoice').trim();
       await downloadInvoicePDF({ filename: `${number}.pdf` });
       btn.textContent = 'Downloaded';

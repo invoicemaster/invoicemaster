@@ -1,8 +1,8 @@
-import { getAll, put } from './db.js?v=1778796839793';
-import { loadInvoice, deleteInvoice } from './invoice.js?v=1778796839793';
-import { loadBusiness } from './business.js?v=1778796839793';
-import { STATUSES } from './templates.js?v=1778796839793';
-import { formatMoney } from './currency.js?v=1778796839793';
+import { getAll, put } from './db.js?v=1778985349915';
+import { loadInvoice, deleteInvoice } from './invoice.js?v=1778985349915';
+import { loadBusiness } from './business.js?v=1778985349915';
+import { STATUSES } from './templates.js?v=1778985349915';
+import { formatMoney } from './currency.js?v=1778985349915';
 
 let state = {
   filter: 'all',
